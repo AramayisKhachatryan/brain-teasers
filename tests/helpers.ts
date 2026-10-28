@@ -28,6 +28,7 @@ export function makeTeaser(overrides: Partial<Teaser> & Pick<Teaser, 'slug'>): T
     title: overrides.slug,
     status: 'solved',
     solvedBy: [],
+    solvedOn: null,
     problem: '<p>Problem</p>',
     hints: null,
     hintCount: 0,

@@ -3,6 +3,7 @@ date: 2026-10-25
 title: Ants on a metre stick
 status: solved
 solved_by: [armen]
+solved_on: 2026-10-25
 ---
 
 ## Problem

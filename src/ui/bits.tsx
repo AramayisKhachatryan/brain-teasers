@@ -1,6 +1,7 @@
 // Small shared pieces: links that use the router, rendered markdown, and "who solved it".
-import { Check } from 'lucide-react'
+import { Check, Hourglass } from 'lucide-react'
 import type { MouseEvent, ReactNode } from 'react'
+import { daysBetween } from '../core/dates'
 import { hrefFor, navigate, type Route } from '../core/router'
 import { DISPLAY_NAME, type Teaser } from '../core/teaser'
 
@@ -22,37 +23,57 @@ export function Prose(props: { html: string; className?: string }) {
   return <div className={`prose ${props.className ?? ''}`} dangerouslySetInnerHTML={{ __html: props.html }} />
 }
 
-/** Archive rows: a pencil tick per solver in their colour. */
+/** Days a solved teaser took, when its `solved_on` date is known. */
+function daysTaken(teaser: Teaser): number | null {
+  return teaser.status === 'solved' && teaser.solvedOn ? daysBetween(teaser.date, teaser.solvedOn) : null
+}
+
+function dayCount(days: number): string {
+  return days === 1 ? '1 day' : `${days} days`
+}
+
+/** Archive rows: a pencil tick per solver in their colour, and how long it took if more than a day. */
 export function SolverMarks({ teaser }: { teaser: Teaser }) {
   if (teaser.status === 'open') return <span className="solver solver--none">Still open</span>
-  if (teaser.solvedBy.length === 0) return <span className="solver solver--none">Nobody got it</span>
+  const days = daysTaken(teaser)
   return (
     <>
+      {teaser.solvedBy.length === 0 && <span className="solver solver--none">Nobody got it</span>}
       {teaser.solvedBy.map((person) => (
         <span key={person} className={`solver solver--${person}`}>
           <Check aria-hidden="true" />
           {DISPLAY_NAME[person]}
         </span>
       ))}
+      {days !== null && days > 0 && (
+        <span className="solver solver--none" aria-label={`took ${dayCount(days)}`}>
+          <Hourglass aria-hidden="true" />
+          {dayCount(days)}
+        </span>
+      )}
     </>
   )
 }
 
 /** Teaser page: one sentence. */
 export function SolvedLine({ teaser }: { teaser: Teaser }) {
+  const days = daysTaken(teaser)
   let content: ReactNode
   if (teaser.status === 'open') content = 'Still open'
-  else if (teaser.solvedBy.length === 0) content = 'Nobody solved this one'
-  else {
+  else if (teaser.solvedBy.length === 0) {
+    content = days ? `Nobody solved this one in ${dayCount(days)}` : 'Nobody solved this one'
+  } else {
     const names = teaser.solvedBy.map((person) => (
       <span key={person} className={`name name--${person}`}>
         {DISPLAY_NAME[person]}
       </span>
     ))
+    const when = days === null ? '' : days === 0 ? ' the same day' : days === 1 ? ' a day later' : ` ${days} days later`
     content = (
       <>
         Solved by {names[0]}
         {names.length > 1 && <> and {names[1]}</>}
+        {when}
       </>
     )
   }

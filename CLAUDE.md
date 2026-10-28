@@ -20,9 +20,10 @@ and Claude is the one who edits those files.
 ## Teaser workflow
 
 The file format and validation rules are in [`teasers/README.md`](teasers/README.md). Summary:
-`teasers/YYYY-MM-DD-short-name.md`, front matter `date`, `title`, `status` (`open`|`solved`),
-`solved_by` (`[]`, `[aramayis]`, `[armen]`, `[aramayis, armen]`), then `## Problem`, `## Hints`,
-`## Solution`, `## Notes`.
+`teasers/YYYY-MM-DD-short-name.md` (the date it was given), front matter `date`, `title`, `status`
+(`open`|`solved`), `solved_by` (`[]`, `[aramayis]`, `[armen]`, `[aramayis, armen]`), optional `solved_on`
+(the day they finished; solving often takes more than a day), then `## Problem`, `## Hints`, `## Solution`,
+`## Notes`. Teasers #1 to #7 (22–29 Oct 2026) were imported from the list and notes Aramayis sent.
 
 What Aramayis says, and what to do:
 
@@ -33,8 +34,9 @@ What Aramayis says, and what to do:
 - **"Give us a hint"**: give a hint that doesn't spoil the answer, and remember it (and who asked) so it can be
   recorded later. Hints live only in the chat until the teaser is solved. If the teaser is finished in a new chat
   that doesn't know the hints, ask Aramayis for them.
-- **"We're done: I solved it, Armen didn't"** (or similar): set `solved_by` and `status: solved`, and add
-  `## Hints` (the hints given, in order, with who asked), `## Solution` (full reasoning) and `## Notes`.
+- **"We're done: I solved it, Armen didn't"** (or similar): set `solved_by`, `status: solved` and `solved_on`
+  (that day, in Armenian time), and add `## Hints` (the hints given, in order, with who asked; leave the section
+  out if there were none), `## Solution` (full reasoning) and `## Notes` (approaches, wrong turns, "no hints").
   Then commit, merge, deploy, and report the new score.
 - Math: use `$…$` and `$$…$$` (KaTeX) and keep formulas short enough to read on a phone.
 

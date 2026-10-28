@@ -1,8 +1,8 @@
 // Parses and validates one teaser file. Runs at build time (Vite plugin) and in tests,
 // never in the browser, so a malformed file fails the build instead of the live app.
 
-import { Marked, type Tokens } from 'marked'
-import markedKatex from 'marked-katex-extension'
+import katex from 'katex'
+import { Marked, type TokenizerAndRendererExtension, type Tokens } from 'marked'
 import { parse as parseYaml } from 'yaml'
 import { PEOPLE, isPerson, type Person, type Status, type Teaser } from './teaser'
 
@@ -17,9 +17,48 @@ export const FILE_NAME = /^(\d{4}-\d{2}-\d{2})-([a-z0-9]+(?:-[a-z0-9]+)*)\.md$/
 const SECTION_ORDER = ['Problem', 'Hints', 'Solution', 'Notes'] as const
 type SectionName = (typeof SECTION_ORDER)[number]
 const FRONT_MATTER_KEYS = ['date', 'title', 'status', 'solved_by'] as const
+const OPTIONAL_KEYS = ['solved_on'] as const
+
+// Math follows Pandoc's rule, so money like "$5 or $10" stays text: the opening $ is followed by a
+// non-space, the closing $ comes right after a non-space and is not followed by a digit. `$$…$$` is display math.
+const INLINE_MATH = /^(\$\$?)(?!\s)((?:\\.|[^\\$\n])+?)(?<!\s)\1(?!\d)/
+const BLOCK_MATH = /^\$\$\n((?:\\[^]|[^\\])+?)\n\$\$(?:\n|$)/
+
+interface MathToken extends Tokens.Generic {
+  text: string
+  displayMode: boolean
+}
+
+const renderMath = (token: Tokens.Generic) =>
+  katex.renderToString((token as MathToken).text, {
+    displayMode: (token as MathToken).displayMode,
+    throwOnError: true,
+    output: 'htmlAndMathml',
+  })
+
+const inlineMath: TokenizerAndRendererExtension = {
+  name: 'inlineMath',
+  level: 'inline',
+  start: (src) => src.search(/(?<!\\)\$/),
+  tokenizer(src) {
+    const match = INLINE_MATH.exec(src)
+    if (match) return { type: 'inlineMath', raw: match[0], text: match[2], displayMode: match[1] === '$$' }
+  },
+  renderer: renderMath,
+}
+
+const blockMath: TokenizerAndRendererExtension = {
+  name: 'blockMath',
+  level: 'block',
+  tokenizer(src) {
+    const match = BLOCK_MATH.exec(src)
+    if (match) return { type: 'blockMath', raw: match[0], text: match[1], displayMode: true }
+  },
+  renderer: (token) => renderMath(token) + '\n',
+}
 
 const markdown = new Marked({ gfm: true })
-markdown.use(markedKatex({ throwOnError: true, output: 'htmlAndMathml' }))
+markdown.use({ extensions: [blockMath, inlineMath] })
 markdown.use({
   renderer: {
     // Links leave the app: in a Home Screen app an in-place navigation has no way back.
@@ -56,9 +95,10 @@ export function parseTeaserFile(fileName: string, source: string): Teaser {
   }
   const fields = data as Record<string, unknown>
 
+  const allowedKeys: readonly string[] = [...FRONT_MATTER_KEYS, ...OPTIONAL_KEYS]
   for (const key of Object.keys(fields)) {
-    if (!(FRONT_MATTER_KEYS as readonly string[]).includes(key)) {
-      fail(`unknown front matter key "${key}" (allowed: ${FRONT_MATTER_KEYS.join(', ')})`)
+    if (!allowedKeys.includes(key)) {
+      fail(`unknown front matter key "${key}" (allowed: ${allowedKeys.join(', ')})`)
     }
   }
   for (const key of FRONT_MATTER_KEYS) {
@@ -95,6 +135,15 @@ export function parseTeaserFile(fileName: string, source: string): Teaser {
   }
   solvedBy.sort((a, b) => PEOPLE.indexOf(a) - PEOPLE.indexOf(b))
 
+  let solvedOn: string | null = null
+  if ('solved_on' in fields) {
+    const value = fields.solved_on
+    if (typeof value !== 'string' || !isCalendarDate(value)) fail('solved_on must be a real date written as YYYY-MM-DD')
+    if (status !== 'solved') fail('solved_on is only for solved teasers')
+    if ((value as string) < (date as string)) fail(`solved_on ${String(value)} is before the teaser's date ${String(date)}`)
+    solvedOn = value as string
+  }
+
   const sections = splitSections(body, fail)
 
   if (!sections.has('Problem')) fail('the "## Problem" section is missing')
@@ -127,6 +176,7 @@ export function parseTeaserFile(fileName: string, source: string): Teaser {
     title: (title as string).trim(),
     status: status as Status,
     solvedBy,
+    solvedOn,
     problem: render('Problem')!,
     hints: render('Hints'),
     hintCount: hintsSource === undefined ? 0 : countListItems(hintsSource),
