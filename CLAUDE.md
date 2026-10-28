@@ -98,6 +98,8 @@ In screenshots, Inter stands in for the iPhone's system font.
   `.github/workflows/deploy.yml` tests, builds and deploys to GitHub Pages on every push to `main`.
 - **Never delete anything**: no deleting branches (leave merged branches), no force-push or history rewriting,
   no deleting repos or teaser files. Every change must be undoable. Ask before creating a new remote repo.
+  The only exception is when Aramayis explicitly asks to delete something (as with the unused sample teaser
+  "Even rolls only" on 28 Oct 2026); delete it in a normal commit so it stays recoverable from git history.
 - After merging, watch the "Deploy" Actions run until it's green, then say it's live (the live site may not
   be reachable from the cloud session, so use the Actions status).
 - After each deploy, say what to do on the phone. Normally nothing: open the app and it updates on the
