@@ -96,10 +96,10 @@ In screenshots, Inter stands in for the iPhone's system font.
 - Claude may commit, push, pull, open pull requests and merge them into `main` without asking.
   Flow: work on a branch → PR → merge. `.github/workflows/check.yml` tests and builds every PR;
   `.github/workflows/deploy.yml` tests, builds and deploys to GitHub Pages on every push to `main`.
-- **Never delete anything**: no deleting branches (leave merged branches), no force-push or history rewriting,
-  no deleting repos or teaser files. Every change must be undoable. Ask before creating a new remote repo.
-  The only exception is when Aramayis explicitly asks to delete something (as with the unused sample teaser
-  "Even rolls only" on 28 Oct 2026); delete it in a normal commit so it stays recoverable from git history.
+- **Deleting is fine when needed** (files, code, features, merged branches), as long as it stays recoverable
+  from git: delete through normal commits.
+- **Never do what git can't undo**: no force-push or history rewriting, no deleting branches with unmerged work,
+  no deleting the repo. Ask before creating a new remote repo.
 - After merging, watch the "Deploy" Actions run until it's green, then say it's live (the live site may not
   be reachable from the cloud session, so use the Actions status).
 - After each deploy, say what to do on the phone. Normally nothing: open the app and it updates on the
