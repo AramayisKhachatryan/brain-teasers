@@ -16,6 +16,8 @@ const VIEWPORTS = {
 const SHOTS = [
   { name: 'home', build: 'real', hash: '#/' },
   { name: 'archive-real', build: 'real', hash: '#/archive' },
+  { name: 'teaser-real', build: 'real', hash: '#/t/2026-10-23-circle-chords' },
+  { name: 'teaser-real-unfolded', build: 'real', hash: '#/t/2026-10-27-kings-salary', open: ['Solution'], fullPage: true },
   { name: 'home-nothing-open', build: 'all-solved', hash: '#/' },
   { name: 'archive', build: 'screens', hash: '#/archive' },
   { name: 'teaser', build: 'screens', hash: '#/t/2026-10-27-broken-stick' },

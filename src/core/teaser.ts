@@ -19,6 +19,8 @@ export interface Teaser {
   title: string
   status: Status
   solvedBy: Person[]
+  /** `YYYY-MM-DD` the day it was finished, when known. Solving sometimes takes more than a day. */
+  solvedOn: string | null
   /** Rendered HTML of each section. Only `problem` exists while a teaser is open. */
   problem: string
   hints: string | null

@@ -25,6 +25,15 @@ export function shortDate(isoDate: string): string {
   return format(isoDate, { day: 'numeric', month: 'short' })
 }
 
+/** Whole days from one teaser date to another, e.g. how long a teaser took to solve. */
+export function daysBetween(from: string, to: string): number {
+  const utc = (isoDate: string) => {
+    const [year, month, day] = isoDate.split('-').map(Number)
+    return Date.UTC(year, month - 1, day)
+  }
+  return Math.round((utc(to) - utc(from)) / 86_400_000)
+}
+
 /** "October 2026", used to group the archive. */
 export function monthLabel(isoDate: string): string {
   return format(isoDate, { month: 'long', year: 'numeric' })

@@ -26,6 +26,7 @@ describe('parseTeaserFile: valid files', () => {
       title: 'Even rolls only',
       status: 'open',
       solvedBy: [],
+      solvedOn: null,
       hints: null,
       hintCount: 0,
       solution: null,
@@ -70,6 +71,14 @@ Text.
     expect(teaser.hints).toBeNull()
   })
 
+  it('reads the optional solved_on date', () => {
+    const teaser = parseTeaserFile(
+      NAME,
+      teaserFile({ status: 'solved', extraFrontMatter: 'solved_on: 2026-10-31\n', body: '## Problem\nP\n\n## Solution\nS\n' }),
+    )
+    expect(teaser.solvedOn).toBe('2026-10-31')
+  })
+
   it('accepts Windows line endings and a byte-order mark', () => {
     const source = '\uFEFF' + teaserFile().replace(/\n/g, '\r\n')
     expect(parseTeaserFile(NAME, source).problem).toBe('<p>Roll a die.</p>\n')
@@ -89,8 +98,25 @@ Text.
   })
 
   it('leaves dollar amounts alone', () => {
-    const teaser = parseTeaserFile(NAME, teaserFile({ body: '## Problem\nPay $5 to win $100 or $50.\n' }))
-    expect(teaser.problem).toBe('<p>Pay $5 to win $100 or $50.</p>\n')
+    const body = '## Problem\nPay $5 to win $100 or $50, or $5/$10 (in $).\n'
+    expect(parseTeaserFile(NAME, teaserFile({ body })).problem).toBe('<p>Pay $5 to win $100 or $50, or $5/$10 (in $).</p>\n')
+  })
+
+  it('renders math right before punctuation, as in "(probability $\\tfrac12$): …"', () => {
+    const body = '## Problem\nTails (probability $\\tfrac12$): start over, so $1 + E$.\n'
+    const html = parseTeaserFile(NAME, teaserFile({ body })).problem
+    expect(html.match(/class="katex"/g)).toHaveLength(2)
+    expect(html).toContain('): start over, so ')
+  })
+
+  it('renders $$…$$ inside a paragraph as display math', () => {
+    const html = parseTeaserFile(NAME, teaserFile({ body: '## Problem\nSo $$E = 6$$ in the end.\n' })).problem
+    expect(html).toContain('katex-display')
+  })
+
+  it('keeps an escaped dollar sign as text', () => {
+    const html = parseTeaserFile(NAME, teaserFile({ body: '## Problem\nIt costs \\$x$ today.\n' })).problem
+    expect(html).toBe('<p>It costs $x$ today.</p>\n')
   })
 
   it('opens links outside the app', () => {
@@ -131,6 +157,9 @@ describe('parseTeaserFile: malformed files fail with a clear message', () => {
     ['duplicate section', NAME, teaserFile({ body: '## Problem\nP\n## Problem\nQ\n' }), /appears twice/],
     ['text before problem', NAME, teaserFile({ body: 'Intro\n## Problem\nP\n' }), /text before the first "## Problem"/],
     ['empty section', NAME, teaserFile({ body: '## Problem\n\n' }), /"## Problem" section is empty/],
+    ['solved_on on an open teaser', NAME, teaserFile({ extraFrontMatter: 'solved_on: 2026-10-29\n' }), /solved_on is only for solved teasers/],
+    ['solved_on before the date', NAME, teaserFile({ status: 'solved', extraFrontMatter: 'solved_on: 2026-10-28\n', body: '## Problem\nP\n## Solution\nS\n' }), /before the teaser's date/],
+    ['impossible solved_on', NAME, teaserFile({ status: 'solved', extraFrontMatter: 'solved_on: 2026-10-32\n', body: '## Problem\nP\n## Solution\nS\n' }), /solved_on must be a real date/],
     ['broken math', NAME, teaserFile({ body: '## Problem\nFind $\\frac{1}$ now.\n' }), /could not render "## Problem"/],
   ]
 

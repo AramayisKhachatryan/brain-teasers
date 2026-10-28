@@ -3,6 +3,7 @@ date: 2026-10-27
 title: The broken stick
 status: solved
 solved_by: [aramayis, armen]
+solved_on: 2026-10-28
 ---
 
 ## Problem

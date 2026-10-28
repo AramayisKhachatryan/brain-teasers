@@ -537,6 +537,12 @@ p {
   color: var(--muted);
 }
 
+.solver--none svg {
+  width: 14px;
+  height: 14px;
+  stroke-width: 2;
+}
+
 /* ---------- Teaser page ---------- */
 
 .back {
