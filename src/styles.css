@@ -41,6 +41,10 @@
   :root {
     --gutter: 44px;
   }
+
+  .screen {
+    max-width: 44rem;
+  }
 }
 
 *,
@@ -404,6 +408,7 @@ p {
   font-size: 1.75rem;
   line-height: 1.2;
   letter-spacing: -0.01em;
+  text-wrap: balance;
 }
 
 .empty__text {

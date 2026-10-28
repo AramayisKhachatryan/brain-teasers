@@ -16,3 +16,14 @@ describe('teasers/', () => {
     expect(() => parseTeaserFile(name, readFileSync(dir + name, 'utf8'))).not.toThrow()
   })
 })
+
+describe('tests/fixtures/ (screenshot data)', () => {
+  const root = fileURLToPath(new URL('./fixtures/', import.meta.url))
+  const fixtures = readdirSync(root, { withFileTypes: true })
+    .filter((entry) => entry.isDirectory())
+    .flatMap((entry) => readdirSync(root + entry.name).map((name) => [entry.name, name]))
+
+  it.each(fixtures)('%s/%s is a valid teaser', (folder, name) => {
+    expect(() => parseTeaserFile(name, readFileSync(`${root}${folder}/${name}`, 'utf8'))).not.toThrow()
+  })
+})
