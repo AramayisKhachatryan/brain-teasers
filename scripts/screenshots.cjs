@@ -16,6 +16,9 @@ const VIEWPORTS = {
 const SHOTS = [
   { name: 'home', build: 'real', hash: '#/' },
   { name: 'archive-real', build: 'real', hash: '#/archive' },
+  { name: 'archive-search', build: 'real', hash: '#/archive', search: 'king' },
+  { name: 'archive-both-oldest', build: 'real', hash: '#/archive', taps: [['radio', 'Both'], ['button', 'Sorted Newest first']] },
+  { name: 'archive-no-match', build: 'real', hash: '#/archive', search: 'pirates', taps: [['radio', 'Armen']] },
   { name: 'teaser-real', build: 'real', hash: '#/t/2026-10-23-circle-chords' },
   { name: 'teaser-real-unfolded', build: 'real', hash: '#/t/2026-10-27-kings-salary', open: ['Solution'], fullPage: true },
   { name: 'home-nothing-open', build: 'all-solved', hash: '#/' },
@@ -46,6 +49,13 @@ async function main() {
         await page.evaluate(() => document.fonts.ready)
         for (const label of shot.open ?? []) {
           await page.getByRole('button', { name: label }).tap() // a tap, like a finger: no hover state
+        }
+        for (const [role, name] of shot.taps ?? []) {
+          await page.getByRole(role, { name, exact: true }).tap()
+        }
+        if (shot.search) {
+          await page.getByRole('searchbox', { name: 'Search titles' }).fill(shot.search)
+          await page.keyboard.press('Enter') // the Search key closes the keyboard
         }
         await page.waitForTimeout(450) // screen fade and fold transitions (260ms)
         const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth)

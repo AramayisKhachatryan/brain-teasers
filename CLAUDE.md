@@ -47,10 +47,12 @@ Node **22.22.0** (`.nvmrc`; the workflows read it). Dependencies are pinned to e
 
 - `src/core/`: plain TypeScript, no React. `parse.ts` (parse + validate a teaser file, render markdown/math),
   `score.ts`, `select.ts` (current teaser = newest open; archive = everything else), `router.ts` (hash router:
-  `#/`, `#/archive`, `#/t/<file-name>`), `dates.ts`.
+  `#/`, `#/archive`, `#/t/<file-name>`), `dates.ts`, `archive.ts` (Archive search by title, solver filter
+  All/Aramayis/Armen/Both where a name includes joint solves, newest/oldest order).
 - `build/teasersPlugin.ts`: turns each `teasers/*.md` into a module at build time. **A malformed teaser fails the
   build**, so a typo can't break the live app. `tests/teasers.test.ts` checks every real file too.
-- `src/ui/`: screens (Home, Archive, Teaser page), tab bar, folds. `src/styles.css`: all styling and design tokens.
+- `src/ui/`: screens (Home, Archive, Teaser page), tab bar, folds. The Archive's search/filter/sort state lives in
+  `App.tsx`, so it survives opening a teaser and coming back. `src/styles.css`: all styling and design tokens.
 - `src/updates.ts`: service worker registration and update handling (see below).
 - `public/icon.svg`: the one source icon. `npm run icons` regenerates the PNGs (`pwa-assets.config.ts`).
 - `tests/fixtures/`: sample teasers for screenshots only. `TEASERS_DIR=<dir>` makes a build use them.
