@@ -1,5 +1,5 @@
-import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { longDate, fullDate, monthLabel, shortDate } from '../core/dates'
+import { ChevronLeft } from 'lucide-react'
+import { fullDate, longDate } from '../core/dates'
 import { goBack } from '../core/router'
 import type { Score } from '../core/score'
 import type { Teaser } from '../core/teaser'
@@ -34,47 +34,6 @@ export function HomeScreen(props: { current: Teaser | null; lastSolved: Teaser |
           )}
         </div>
       )}
-    </main>
-  )
-}
-
-export function ArchiveScreen({ teasers }: { teasers: Teaser[] }) {
-  const months: { label: string; teasers: Teaser[] }[] = []
-  for (const teaser of teasers) {
-    const label = monthLabel(teaser.date)
-    if (months.at(-1)?.label !== label) months.push({ label, teasers: [] })
-    months.at(-1)!.teasers.push(teaser)
-  }
-
-  return (
-    <main className="screen screen--archive">
-      <h1 className="screen__title">Archive</h1>
-      {months.length === 0 && (
-        <p className="empty__text">
-          Finished teasers land here, with the hints you asked for and the full solution.
-        </p>
-      )}
-      {months.map((month) => (
-        <section key={month.label} className="archive__month">
-          <h2 className="archive__month-label">{month.label}</h2>
-          <ul className="archive__list">
-            {month.teasers.map((teaser) => (
-              <li key={teaser.slug}>
-                <Link to={{ name: 'teaser', slug: teaser.slug }} className="row tappable">
-                  <span className="row__date">{shortDate(teaser.date)}</span>
-                  <span className="row__body">
-                    <span className="row__title">{teaser.title}</span>
-                    <span className="row__solvers">
-                      <SolverMarks teaser={teaser} />
-                    </span>
-                  </span>
-                  <ChevronRight className="row__chevron" aria-hidden="true" />
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </section>
-      ))}
     </main>
   )
 }

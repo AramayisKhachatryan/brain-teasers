@@ -10,6 +10,7 @@
   --rule: rgba(28, 38, 51, 0.13);
   --press: rgba(28, 38, 51, 0.06);
   --bar: rgba(237, 241, 234, 0.84);
+  --field: #f6f8f3;
   --aramayis: #2c59a3;
   --armen: #b8372f;
 
@@ -32,6 +33,7 @@
     --rule: rgba(227, 233, 224, 0.14);
     --press: rgba(227, 233, 224, 0.07);
     --bar: rgba(24, 32, 28, 0.84);
+    --field: #202924;
     --aramayis: #8fb1ec;
     --armen: #ee8d85;
   }
@@ -86,7 +88,15 @@ p {
 :focus-visible {
   outline: 2px solid var(--ink);
   outline-offset: 2px;
-  border-radius: 6px;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }
 
 /* Anything you tap: no text selection, no callout, no double-tap zoom delay. */
@@ -443,6 +453,197 @@ p {
 
 /* ---------- Archive ---------- */
 
+.finder {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 18px;
+}
+
+.finder__row {
+  display: flex;
+  gap: 8px;
+}
+
+.search {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+}
+
+.search__icon {
+  position: absolute;
+  left: 12px;
+  width: 18px;
+  height: 18px;
+  color: var(--muted);
+  pointer-events: none;
+}
+
+/* 17px keeps iOS from zooming in when the field is focused. */
+.search__input {
+  width: 100%;
+  min-height: 44px;
+  padding: 0 44px 0 38px;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  background: var(--field);
+  color: var(--ink);
+  font: 400 17px/1.2 var(--font-ui);
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.search__input::placeholder {
+  color: var(--muted);
+  opacity: 1;
+}
+
+.search__input::-webkit-search-cancel-button,
+.search__input::-webkit-search-decoration {
+  display: none;
+  -webkit-appearance: none;
+}
+
+.search__input:focus-visible {
+  outline: none;
+  border-color: var(--ink);
+  box-shadow: 0 0 0 1px var(--ink);
+}
+
+.search__clear {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 0;
+  border-radius: 12px;
+  background: none;
+  color: var(--muted);
+}
+
+.search__clear svg {
+  width: 18px;
+  height: 18px;
+}
+
+.sort {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 0 12px;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  background: var(--field);
+  color: var(--ink);
+  font: 500 15px/1 var(--font-ui);
+}
+
+.sort svg {
+  width: 17px;
+  height: 17px;
+  color: var(--muted);
+}
+
+.sort__labels {
+  display: grid;
+}
+
+.sort__labels > span {
+  grid-area: 1 / 1;
+}
+
+.sort__labels > .is-hidden {
+  visibility: hidden;
+}
+
+/* Who solved it. Selected chips are filled with that person's pencil colour; "Both" is the two-ended pencil. */
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chip {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  height: 36px;
+  padding: 0 15px;
+  border: 1px solid var(--rule);
+  border-radius: 18px;
+  background: transparent;
+  color: var(--ink);
+  font: 500 15px/1 var(--font-ui);
+  transition:
+    background-color 160ms var(--ease),
+    color 160ms var(--ease);
+}
+
+/* The visible chip is 36px; this stretches the tap area to 44px. */
+.chip::after {
+  content: '';
+  position: absolute;
+  inset: -4px 0;
+}
+
+.chip--aramayis {
+  color: var(--aramayis);
+}
+
+.chip--armen {
+  color: var(--armen);
+}
+
+.chip[aria-checked='true'] {
+  border-color: transparent;
+  color: var(--paper);
+}
+
+.chip--all[aria-checked='true'] {
+  background: var(--ink);
+}
+
+.chip--aramayis[aria-checked='true'] {
+  background: var(--aramayis);
+}
+
+.chip--armen[aria-checked='true'] {
+  background: var(--armen);
+}
+
+.chip--both[aria-checked='true'] {
+  background: linear-gradient(90deg, var(--aramayis) 50%, var(--armen) 50%);
+}
+
+.finder__count {
+  margin-top: 12px;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.no-matches {
+  margin-top: 20px;
+}
+
+.no-matches__reset {
+  margin-top: 14px;
+  min-height: 44px;
+  padding: 0 16px;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  background: var(--field);
+  color: var(--ink);
+  font: 500 16px/1 var(--font-ui);
+}
+
 .archive__month {
   margin-top: 24px;
 }
@@ -693,8 +894,15 @@ p {
 .row:active,
 .empty__last:active,
 .back:active,
-.fold__toggle:active {
+.fold__toggle:active,
+.search__clear:active,
+.chip[aria-checked='false']:active {
   background: var(--press);
+}
+
+.sort:active,
+.no-matches__reset:active {
+  background: var(--rule);
 }
 
 .tab:active svg {
@@ -705,7 +913,8 @@ p {
   .row:hover,
   .empty__last:hover,
   .back:hover,
-  .fold__toggle:hover {
+  .fold__toggle:hover,
+  .chip[aria-checked='false']:hover {
     background: var(--press);
   }
 }
