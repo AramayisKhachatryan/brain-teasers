@@ -1,7 +1,7 @@
 // Small shared pieces: links that use the router, rendered markdown, and "who solved it".
-import { Check, Hourglass } from 'lucide-react'
+import { Check, ChevronRight, Hourglass } from 'lucide-react'
 import type { MouseEvent, ReactNode } from 'react'
-import { daysBetween } from '../core/dates'
+import { daysBetween, shortDate } from '../core/dates'
 import { hrefFor, navigate, type Route } from '../core/router'
 import { DISPLAY_NAME, type Teaser } from '../core/teaser'
 
@@ -52,6 +52,22 @@ export function SolverMarks({ teaser }: { teaser: Teaser }) {
         </span>
       )}
     </>
+  )
+}
+
+/** One teaser in a list (Archive, and a day with several teasers in the Calendar). */
+export function TeaserRow({ teaser }: { teaser: Teaser }) {
+  return (
+    <Link to={{ name: 'teaser', slug: teaser.slug }} className="row tappable">
+      <span className="row__date">{shortDate(teaser.date)}</span>
+      <span className="row__body">
+        <span className="row__title">{teaser.title}</span>
+        <span className="row__solvers">
+          <SolverMarks teaser={teaser} />
+        </span>
+      </span>
+      <ChevronRight className="row__chevron" aria-hidden="true" />
+    </Link>
   )
 }
 

@@ -1,6 +1,6 @@
 import { ChevronLeft } from 'lucide-react'
 import { fullDate, longDate } from '../core/dates'
-import { goBack } from '../core/router'
+import { cameFrom, goBack, type Route } from '../core/router'
 import type { Score } from '../core/score'
 import type { Teaser } from '../core/teaser'
 import { Link, Prose, SolvedLine, SolverMarks } from './bits'
@@ -38,11 +38,20 @@ export function HomeScreen(props: { current: Teaser | null; lastSolved: Teaser |
   )
 }
 
+const BACK_LABEL: Record<Exclude<Route['name'], 'teaser'>, string> = {
+  home: 'Current',
+  calendar: 'Calendar',
+  archive: 'Archive',
+}
+
 export function TeaserScreen({ teaser }: { teaser: Teaser | undefined }) {
+  // Back returns to the screen this teaser was opened from; after a direct link, to the Archive.
+  const from = cameFrom()
+  const backTo: Exclude<Route, { name: 'teaser' }> = from && from.name !== 'teaser' ? from : { name: 'archive' }
   const back = (
-    <button type="button" className="back tappable" onClick={() => goBack({ name: 'archive' })}>
+    <button type="button" className="back tappable" onClick={() => goBack(backTo)}>
       <ChevronLeft aria-hidden="true" />
-      Archive
+      {BACK_LABEL[backTo.name]}
     </button>
   )
 

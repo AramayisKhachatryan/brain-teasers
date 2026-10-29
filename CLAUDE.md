@@ -47,12 +47,16 @@ Node **22.22.0** (`.nvmrc`; the workflows read it). Dependencies are pinned to e
 
 - `src/core/`: plain TypeScript, no React. `parse.ts` (parse + validate a teaser file, render markdown/math),
   `score.ts`, `select.ts` (current teaser = newest open; archive = everything else), `router.ts` (hash router:
-  `#/`, `#/archive`, `#/t/<file-name>`), `dates.ts`, `archive.ts` (Archive search by title, solver filter
-  All/Aramayis/Armen/Both where a name includes joint solves, newest/oldest order).
+  `#/`, `#/calendar`, `#/archive`, `#/t/<file-name>`; each in-app navigation stores the screen it came from in
+  `history.state`, which drives the teaser page's Back label and the active tab), `dates.ts`, `archive.ts`
+  (Archive search by title, solver filter All/Aramayis/Armen/Both where a name includes joint solves,
+  newest/oldest order), `calendar.ts` (month grid, Monday first; a teaser marks the day it was given, and its
+  days until `solved_on`, or until today while open, form a "still solving" stretch).
 - `build/teasersPlugin.ts`: turns each `teasers/*.md` into a module at build time. **A malformed teaser fails the
   build**, so a typo can't break the live app. `tests/teasers.test.ts` checks every real file too.
-- `src/ui/`: screens (Home, Archive, Teaser page), tab bar, folds. The Archive's search/filter/sort state lives in
-  `App.tsx`, so it survives opening a teaser and coming back. `src/styles.css`: all styling and design tokens.
+- `src/ui/`: screens (Home, Calendar, Archive, Teaser page), the tab bar (Current, Calendar, Archive), folds.
+  The Archive's search/filter/sort and the Calendar's month live in `App.tsx`, so they survive opening a teaser
+  and coming back. In the Calendar, tapping a day with one teaser opens it; a day with several lists them. `src/styles.css`: all styling and design tokens.
 - `src/updates.ts`: service worker registration and update handling (see below).
 - `public/icon.svg`: the one source icon. `npm run icons` regenerates the PNGs (`pwa-assets.config.ts`).
 - `tests/fixtures/`: sample teasers for screenshots only. `TEASERS_DIR=<dir>` makes a build use them.
@@ -86,7 +90,8 @@ reloading twice, and never while someone is reading a teaser.
 - `npm test`: unit tests + validation of every teaser file.
 - `npm run build`: typecheck + production build into `dist/` (fails on a malformed teaser).
 - `npm run screenshots`: real app + fixtures at 390×844, 820×1180 and 1180×820, light and dark, into `.screens/`
-  (`sheet-*.png` put light and dark side by side). Fails on console errors or horizontal overflow.
+  (`sheet-*.png` put light and dark side by side). "Today" is fixed at 30 Oct 2026 so the Calendar shots are
+  reproducible. Fails on console errors or horizontal overflow.
 - `npm run test:updates`: the update-flow test above.
 - `npm run icons`: regenerate icons from `public/icon.svg`.
 

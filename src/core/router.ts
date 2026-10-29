@@ -1,11 +1,12 @@
-// A small hash router (#/, #/archive, #/t/<slug>) so the app works under the GitHub Pages sub-path.
+// A small hash router (#/, #/calendar, #/archive, #/t/<slug>) so the app works under the GitHub Pages sub-path.
 // In-app navigation uses pushState; Back/forward arrive as popstate.
 
-export type Route = { name: 'home' } | { name: 'archive' } | { name: 'teaser'; slug: string }
+export type Route = { name: 'home' } | { name: 'calendar' } | { name: 'archive' } | { name: 'teaser'; slug: string }
 
 export function parseHash(hash: string): Route {
   const path = hash.replace(/^#/, '').replace(/\/+$/, '')
   if (path === '' || path === '/') return { name: 'home' }
+  if (path === '/calendar') return { name: 'calendar' }
   if (path === '/archive') return { name: 'archive' }
   const teaser = /^\/t\/([a-z0-9-]+)$/.exec(path)
   if (teaser) return { name: 'teaser', slug: teaser[1] }
@@ -16,6 +17,8 @@ export function hrefFor(route: Route): string {
   switch (route.name) {
     case 'home':
       return '#/'
+    case 'calendar':
+      return '#/calendar'
     case 'archive':
       return '#/archive'
     case 'teaser':
@@ -33,7 +36,6 @@ const beforeChange = new Set<Listener>()
 
 let route: Route = typeof window === 'undefined' ? { name: 'home' } : parseHash(window.location.hash)
 let lastKind: 'push' | 'pop' = 'pop'
-let hasInAppHistory = false
 
 export function currentRoute(): Route {
   return route
@@ -58,17 +60,21 @@ export function onBeforeChange(listener: Listener): () => void {
 export function navigate(to: Route, options: { replace?: boolean } = {}): void {
   const href = hrefFor(to)
   if (href === routeKey(route) && !options.replace) return
+  // Each pushed entry remembers the screen it was opened from, so Back can go there and be labelled with it.
   if (options.replace) window.history.replaceState(null, '', href)
-  else {
-    window.history.pushState(null, '', href)
-    hasInAppHistory = true
-  }
+  else window.history.pushState({ from: routeKey(route) }, '', href)
   setRoute(parseHash(href), 'push')
+}
+
+/** The screen the current one was opened from in this app, or null after a direct link or a reload of the first screen. */
+export function cameFrom(): Route | null {
+  const from: unknown = typeof window === 'undefined' ? null : window.history.state?.from
+  return typeof from === 'string' ? parseHash(from) : null
 }
 
 /** Goes back if the previous screen was in this app, otherwise to `fallback`. */
 export function goBack(fallback: Route): void {
-  if (hasInAppHistory) window.history.back()
+  if (cameFrom()) window.history.back()
   else navigate(fallback, { replace: true })
 }
 
