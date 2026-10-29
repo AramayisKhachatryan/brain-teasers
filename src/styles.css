@@ -11,6 +11,7 @@
   --press: rgba(28, 38, 51, 0.06);
   --bar: rgba(237, 241, 234, 0.84);
   --field: #f6f8f3;
+  --band: rgba(28, 38, 51, 0.09);
   --aramayis: #2c59a3;
   --armen: #b8372f;
 
@@ -34,6 +35,7 @@
     --press: rgba(227, 233, 224, 0.07);
     --bar: rgba(24, 32, 28, 0.84);
     --field: #202924;
+    --band: rgba(227, 233, 224, 0.1);
     --aramayis: #8fb1ec;
     --armen: #ee8d85;
   }
@@ -742,6 +744,216 @@ p {
   width: 14px;
   height: 14px;
   stroke-width: 2;
+}
+
+/* ---------- Calendar ---------- */
+
+.cal-nav {
+  display: grid;
+  grid-template-columns: 44px 1fr 44px;
+  align-items: center;
+  margin: 14px 0 4px;
+}
+
+.cal-nav__month {
+  font-family: var(--font-read);
+  font-weight: 600;
+  font-size: 1.25rem;
+  text-align: center;
+}
+
+.cal-nav__step {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 0;
+  border-radius: 12px;
+  background: none;
+  color: var(--ink);
+}
+
+.cal-nav__step svg {
+  width: 24px;
+  height: 24px;
+}
+
+.cal-nav__step:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.cal {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.cal th {
+  padding: 8px 0 6px;
+  font-weight: 500;
+  font-size: 13px;
+  color: var(--muted);
+  text-align: center;
+}
+
+.cal td {
+  height: 58px;
+  padding: 0;
+}
+
+.cal-day {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  height: 58px;
+  padding: 6px 0 0;
+  border: 0;
+  background: none;
+  color: var(--muted);
+  font: inherit;
+}
+
+/* "Still solving": a band from the day a teaser was given to the day it was solved. */
+.cal-day__band {
+  position: absolute;
+  top: 6px;
+  right: 50%;
+  left: 50%;
+  height: 34px;
+  background: var(--band);
+}
+
+.cal-day__band--left {
+  left: 0;
+}
+
+.cal-day__band--right {
+  right: 0;
+}
+
+/* The last day of a stretch: the band rounds off around the date. */
+.cal-day__band--left:not(.cal-day__band--right) {
+  right: calc(50% - 17px);
+  border-radius: 0 17px 17px 0;
+}
+
+.cal-day__num {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  font-family: var(--font-read);
+  font-size: 1.0625rem;
+  line-height: 1;
+  font-variant-numeric: lining-nums tabular-nums;
+  transition: transform 120ms var(--ease);
+}
+
+.cal-day--active {
+  color: var(--ink);
+}
+
+/* A teaser was given that day: the date is circled, like ringing it in pencil. */
+.cal-day--given .cal-day__num {
+  border: 1.5px solid var(--ink);
+  background: var(--paper);
+  font-weight: 600;
+}
+
+.cal-day--open .cal-day__num {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.cal-day--today .cal-day__num {
+  font-weight: 700;
+  color: var(--ink);
+  text-decoration: underline 2px;
+  text-underline-offset: 4px;
+}
+
+.cal-day--open.cal-day--today .cal-day__num {
+  color: var(--paper);
+}
+
+.cal-day--chosen .cal-day__num {
+  outline: 2px solid var(--muted);
+  outline-offset: 2px;
+}
+
+.cal-day.tappable:active .cal-day__num {
+  transform: scale(0.9);
+}
+
+.cal-day__marks {
+  display: flex;
+  gap: 3px;
+  height: 6px;
+  margin-top: 5px;
+}
+
+.cal-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.cal-dot--aramayis {
+  background: var(--aramayis);
+}
+
+.cal-dot--armen {
+  background: var(--armen);
+}
+
+.cal-dot--nobody {
+  background: var(--muted);
+  opacity: 0.6;
+}
+
+.cal-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  margin: 18px 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.cal-legend li {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.cal-legend__given,
+.cal-legend__open {
+  width: 14px;
+  height: 14px;
+  border: 1.5px solid var(--ink);
+  border-radius: 50%;
+}
+
+.cal-legend__open {
+  background: var(--ink);
+}
+
+.cal-legend__band {
+  width: 22px;
+  height: 10px;
+  border-radius: 5px;
+  background: var(--band);
+}
+
+.cal-choice {
+  margin-top: 28px;
 }
 
 /* ---------- Teaser page ---------- */

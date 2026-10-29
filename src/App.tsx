@@ -1,10 +1,12 @@
 import { useLayoutEffect, useState, useSyncExternalStore } from 'react'
 import { DEFAULT_VIEW, type ArchiveView } from './core/archive'
+import { monthOf, todayIso } from './core/calendar'
 import { currentRoute, lastNavigation, onBeforeChange, routeKey, subscribe } from './core/router'
 import { computeScore } from './core/score'
 import { archiveTeasers, currentTeaser, lastSolved } from './core/select'
 import { teasers } from './teasers'
 import { ArchiveScreen } from './ui/ArchiveScreen'
+import { CalendarScreen } from './ui/CalendarScreen'
 import { HomeScreen, TeaserScreen } from './ui/screens'
 import { TabBar } from './ui/TabBar'
 
@@ -22,6 +24,8 @@ export function App() {
   const key = routeKey(route)
   // Lives here, above the screens, so a search or filter is still there after opening a teaser and coming back.
   const [archiveView, setArchiveView] = useState<ArchiveView>(DEFAULT_VIEW)
+  const today = todayIso()
+  const [calendarMonth, setCalendarMonth] = useState(() => monthOf(today))
 
   useLayoutEffect(() => {
     window.scrollTo(0, lastNavigation() === 'pop' ? (scrollPositions.get(key) ?? 0) : 0)
@@ -31,6 +35,9 @@ export function App() {
   switch (route.name) {
     case 'home':
       screen = <HomeScreen current={current} lastSolved={last} score={score} />
+      break
+    case 'calendar':
+      screen = <CalendarScreen teasers={teasers} month={calendarMonth} onMonthChange={setCalendarMonth} today={today} />
       break
     case 'archive':
       screen = <ArchiveScreen teasers={archive} view={archiveView} onViewChange={setArchiveView} />

@@ -5,6 +5,8 @@ const { chromium } = require('playwright')
 const path = require('node:path')
 
 const BASE = 'http://localhost:4173'
+// "Today" in every screenshot, so the Calendar (today's month, the open teaser's stretch) is reproducible.
+const TODAY = new Date('2026-10-30T12:00:00')
 const OUT = path.resolve(__dirname, '../.screens')
 
 const VIEWPORTS = {
@@ -22,6 +24,9 @@ const SHOTS = [
   { name: 'teaser-real', build: 'real', hash: '#/t/2026-10-23-circle-chords' },
   { name: 'teaser-real-unfolded', build: 'real', hash: '#/t/2026-10-27-kings-salary', open: ['Solution'], fullPage: true },
   { name: 'home-nothing-open', build: 'all-solved', hash: '#/' },
+  { name: 'calendar', build: 'real', hash: '#/calendar' },
+  { name: 'calendar-two-on-a-day', build: 'screens', hash: '#/calendar', taps: [['button', /^Wednesday 21 October/]] },
+  { name: 'teaser-from-calendar', build: 'real', hash: '#/calendar', taps: [['button', /^Saturday 24 October/]] },
   { name: 'archive', build: 'screens', hash: '#/archive' },
   { name: 'teaser', build: 'screens', hash: '#/t/2026-10-27-broken-stick' },
   { name: 'teaser-unfolded', build: 'screens', hash: '#/t/2026-10-27-broken-stick', open: ['Hints', 'Solution'], fullPage: true },
@@ -44,6 +49,7 @@ async function main() {
         const page = await context.newPage()
         page.on('console', (msg) => msg.type() === 'error' && problems.push(`${shot.name}: ${msg.text()}`))
         page.on('pageerror', (err) => problems.push(`${shot.name}: ${err.message}`))
+        await page.clock.setFixedTime(TODAY)
         await page.goto(`${BASE}/${shot.build}/index.html${shot.hash}`)
         await page.waitForLoadState('networkidle')
         await page.evaluate(() => document.fonts.ready)
@@ -51,7 +57,7 @@ async function main() {
           await page.getByRole('button', { name: label }).tap() // a tap, like a finger: no hover state
         }
         for (const [role, name] of shot.taps ?? []) {
-          await page.getByRole(role, { name, exact: true }).tap()
+          await page.getByRole(role, typeof name === 'string' ? { name, exact: true } : { name }).tap()
         }
         if (shot.search) {
           await page.getByRole('searchbox', { name: 'Search titles' }).fill(shot.search)

@@ -1,9 +1,9 @@
-import { CalendarArrowDown, CalendarArrowUp, ChevronRight, Search, X } from 'lucide-react'
+import { CalendarArrowDown, CalendarArrowUp, Search, X } from 'lucide-react'
 import { useRef, type FormEvent } from 'react'
 import { DEFAULT_VIEW, isFiltered, viewArchive, type ArchiveView, type SolverFilter } from '../core/archive'
-import { monthLabel, shortDate } from '../core/dates'
+import { monthLabel } from '../core/dates'
 import { DISPLAY_NAME, type Teaser } from '../core/teaser'
-import { Link, SolverMarks } from './bits'
+import { TeaserRow } from './bits'
 
 const SOLVER_CHOICES: { value: SolverFilter; label: string }[] = [
   { value: 'all', label: 'All' },
@@ -122,16 +122,7 @@ export function ArchiveScreen(props: {
           <ul className="archive__list">
             {month.teasers.map((teaser) => (
               <li key={teaser.slug}>
-                <Link to={{ name: 'teaser', slug: teaser.slug }} className="row tappable">
-                  <span className="row__date">{shortDate(teaser.date)}</span>
-                  <span className="row__body">
-                    <span className="row__title">{teaser.title}</span>
-                    <span className="row__solvers">
-                      <SolverMarks teaser={teaser} />
-                    </span>
-                  </span>
-                  <ChevronRight className="row__chevron" aria-hidden="true" />
-                </Link>
+                <TeaserRow teaser={teaser} />
               </li>
             ))}
           </ul>
