@@ -21,12 +21,14 @@ const OPTIONAL_KEYS = ['solved_on'] as const
 
 // Math follows Pandoc's rule, so money like "$5 or $10" stays text: the opening $ is followed by a
 // non-space, the closing $ comes right after a non-space and is not followed by a digit. `$$…$$` is display math.
-const INLINE_MATH = /^(\$\$?)(?!\s)((?:\\.|[^\\$\n])+?)(?<!\s)\1(?!\d)/
+// Punctuation right after inline math is kept with it, so a line never starts with a lone "." or ")".
+const INLINE_MATH = /^(\$\$?)(?!\s)((?:\\.|[^\\$\n])+?)(?<!\s)\1(?!\d)([.,;:!?)\]]*)/
 const BLOCK_MATH = /^\$\$\n((?:\\[^]|[^\\])+?)\n\$\$(?:\n|$)/
 
 interface MathToken extends Tokens.Generic {
   text: string
   displayMode: boolean
+  trailing?: string
 }
 
 const renderMath = (token: Tokens.Generic) =>
@@ -42,14 +44,22 @@ const inlineMath: TokenizerAndRendererExtension = {
   start: (src) => src.search(/(?<!\\)\$/),
   tokenizer(src) {
     const match = INLINE_MATH.exec(src)
-    if (match) return { type: 'inlineMath', raw: match[0], text: match[2], displayMode: match[1] === '$$' }
+    if (match) {
+      return { type: 'inlineMath', raw: match[0], text: match[2], displayMode: match[1] === '$$', trailing: match[3] }
+    }
   },
-  renderer: renderMath,
+  // Inline math doesn't break across lines (see .math-inline in styles.css); display math stands on its own.
+  renderer: (token) => {
+    const { displayMode, trailing = '' } = token as MathToken
+    return displayMode ? renderMath(token) + trailing : `<span class="math-inline">${renderMath(token)}${trailing}</span>`
+  },
 }
 
 const blockMath: TokenizerAndRendererExtension = {
   name: 'blockMath',
   level: 'block',
+  // A `$$` line may start display math right after a line of text, without a blank line in between.
+  start: (src) => src.match(/^\$\$[ \t]*$/m)?.index,
   tokenizer(src) {
     const match = BLOCK_MATH.exec(src)
     if (match) return { type: 'blockMath', raw: match[0], text: match[1], displayMode: true }
@@ -161,11 +171,17 @@ export function parseTeaserFile(fileName: string, source: string): Teaser {
   const render = (name: SectionName): string | null => {
     const source = sections.get(name)
     if (source === undefined) return null
+    let html: string
     try {
-      return markdown.parse(source, { async: false })
+      html = markdown.parse(source, { async: false })
     } catch (error) {
       return fail(`could not render "## ${name}" (${(error as Error).message.split('\n')[0]})`)
     }
+    // Display math that didn't render shows up as raw "$$" text; catch it here instead of on the phone.
+    if (/\$\$/.test(html.replace(/<pre>[\s\S]*?<\/pre>|<code>[\s\S]*?<\/code>/g, ''))) {
+      fail(`"## ${name}" has display math ($$ … $$) that didn't render: put each $$ on its own line`)
+    }
+    return html
   }
 
   const hintsSource = sections.get('Hints')

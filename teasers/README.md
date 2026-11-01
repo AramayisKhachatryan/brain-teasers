@@ -59,9 +59,12 @@ The current teaser (shown big on Home) is the newest open one.
   $$
   ```
 
-  Long display formulas scroll sideways on the phone; prefer short lines.
+  The `$$` block may follow a line of text directly. Long display formulas scroll sideways on the phone;
+  prefer short lines. Inline math never breaks across lines, so keep it short and put anything longer in a
+  `$$` block.
 - Money like `$5`, `$100` or `$5/$10` stays text. If a dollar sign is ever read as math, write `\$`.
-- A math mistake fails the build with the file name and the problem, so it never reaches the app.
+- A math mistake, or a `$$` that didn't turn into a formula, fails the build with the file name and the problem,
+  so it never reaches the app.
 - Hints: one numbered item per hint, ending with who asked, e.g. `*(asked by Armen)*`.
 - Links open in Safari, outside the app.
 
