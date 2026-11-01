@@ -5,11 +5,12 @@ import { monthLabel } from '../core/dates'
 import { DISPLAY_NAME, type Teaser } from '../core/teaser'
 import { TeaserRow } from './bits'
 
-const SOLVER_CHOICES: { value: SolverFilter; label: string }[] = [
-  { value: 'all', label: 'All' },
+// No chip selected shows every teaser; tapping the selected chip again clears it.
+const SOLVER_CHOICES: { value: Exclude<SolverFilter, 'all'>; label: string }[] = [
   { value: 'aramayis', label: 'Aramayis' },
   { value: 'armen', label: 'Armen' },
   { value: 'both', label: 'Both' },
+  { value: 'nobody', label: 'Nobody' },
 ]
 
 export function ArchiveScreen(props: {
@@ -21,6 +22,8 @@ export function ArchiveScreen(props: {
   const searchRef = useRef<HTMLInputElement>(null)
   const shown = viewArchive(props.teasers, view)
   const update = (changes: Partial<ArchiveView>) => onViewChange({ ...view, ...changes })
+  // Clears the search and the filter, keeping the date order.
+  const showAll = () => onViewChange({ ...DEFAULT_VIEW, order: view.order })
 
   // The keyboard's Search key just closes the keyboard: results already update while typing.
   const onSubmit = (event: FormEvent) => {
@@ -92,15 +95,14 @@ export function ArchiveScreen(props: {
               </button>
             </form>
 
-            <div className="chips" role="radiogroup" aria-label="Solved by">
+            <div className="chips" role="group" aria-label="Solved by">
               {SOLVER_CHOICES.map(({ value, label }) => (
                 <button
                   key={value}
                   type="button"
-                  role="radio"
-                  aria-checked={view.solver === value}
+                  aria-pressed={view.solver === value}
                   className={`chip chip--${value} tappable`}
-                  onClick={() => update({ solver: value })}
+                  onClick={() => update({ solver: view.solver === value ? 'all' : value })}
                 >
                   {label}
                 </button>
@@ -108,11 +110,18 @@ export function ArchiveScreen(props: {
             </div>
           </div>
 
-          <p className="finder__count" aria-live="polite">
-            {isFiltered(view) && shown.length > 0 && `${shown.length} of ${props.teasers.length} teasers`}
-          </p>
+          <div className="finder__count">
+            <p aria-live="polite">
+              {isFiltered(view) && shown.length > 0 && `${shown.length} of ${props.teasers.length} teasers`}
+            </p>
+            {isFiltered(view) && shown.length > 0 && (
+              <button type="button" className="finder__show-all tappable" onClick={showAll}>
+                Show all
+              </button>
+            )}
+          </div>
 
-          {shown.length === 0 && <NoMatches view={view} onShowAll={() => onViewChange({ ...DEFAULT_VIEW, order: view.order })} />}
+          {shown.length === 0 && <NoMatches view={view} onShowAll={showAll} />}
         </>
       )}
 
@@ -134,12 +143,17 @@ export function ArchiveScreen(props: {
 
 function NoMatches({ view, onShowAll }: { view: ArchiveView; onShowAll: () => void }) {
   const query = view.query.trim()
-  const who =
-    view.solver === 'all' ? '' : view.solver === 'both' ? 'solved by both of you' : `solved by ${DISPLAY_NAME[view.solver]}`
+  const which: Record<Exclude<SolverFilter, 'all'>, string> = {
+    aramayis: `teasers solved by ${DISPLAY_NAME.aramayis}`,
+    armen: `teasers solved by ${DISPLAY_NAME.armen}`,
+    both: 'teasers solved by both of you',
+    nobody: 'teasers that nobody solved',
+  }
   let message: string
-  if (query && who) message = `No teasers ${who} have “${query}” in the title.`
-  else if (query) message = `No titles have “${query}” in them.`
-  else message = `No teasers ${who} yet.`
+  if (view.solver === 'all') message = `No titles have “${query}” in them.`
+  else if (query) message = `No ${which[view.solver]} have “${query}” in the title.`
+  else if (view.solver === 'nobody') message = 'At least one of you has solved every teaser so far.'
+  else message = `No ${which[view.solver]} yet.`
 
   return (
     <div className="no-matches">

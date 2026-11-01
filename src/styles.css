@@ -575,7 +575,7 @@ p {
 .chips {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 8px 6px;
 }
 
 .chip {
@@ -583,7 +583,7 @@ p {
   display: inline-flex;
   align-items: center;
   height: 36px;
-  padding: 0 15px;
+  padding: 0 12px;
   border: 1px solid var(--rule);
   border-radius: 18px;
   background: transparent;
@@ -609,31 +609,57 @@ p {
   color: var(--armen);
 }
 
-.chip[aria-checked='true'] {
+.chip--nobody {
+  color: var(--muted);
+}
+
+.chip[aria-pressed='true'] {
   border-color: transparent;
   color: var(--paper);
 }
 
-.chip--all[aria-checked='true'] {
-  background: var(--ink);
-}
-
-.chip--aramayis[aria-checked='true'] {
+.chip--aramayis[aria-pressed='true'] {
   background: var(--aramayis);
 }
 
-.chip--armen[aria-checked='true'] {
+.chip--armen[aria-pressed='true'] {
   background: var(--armen);
 }
 
-.chip--both[aria-checked='true'] {
+.chip--both[aria-pressed='true'] {
   background: linear-gradient(90deg, var(--aramayis) 50%, var(--armen) 50%);
 }
 
+/* Grey, like the "Nobody got it" mark in the list. */
+.chip--nobody[aria-pressed='true'] {
+  background: var(--muted);
+}
+
 .finder__count {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
   margin-top: 12px;
   font-size: 14px;
   color: var(--muted);
+}
+
+/* A text button; the pseudo-element stretches its tap area to 44px. */
+.finder__show-all {
+  position: relative;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--ink);
+  font: 600 14px/1.2 var(--font-ui);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.finder__show-all::after {
+  content: '';
+  position: absolute;
+  inset: -13px -10px;
 }
 
 .no-matches {
@@ -1113,7 +1139,7 @@ p {
 .back:active,
 .fold__toggle:active,
 .search__clear:active,
-.chip[aria-checked='false']:active {
+.chip[aria-pressed='false']:active {
   background: var(--press);
 }
 
@@ -1131,7 +1157,7 @@ p {
   .empty__last:hover,
   .back:hover,
   .fold__toggle:hover,
-  .chip[aria-checked='false']:hover {
+  .chip[aria-pressed='false']:hover {
     background: var(--press);
   }
 }

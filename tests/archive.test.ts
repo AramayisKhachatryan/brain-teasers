@@ -48,6 +48,10 @@ describe('solver filter', () => {
     expect(slugs(viewArchive(teasers, view({ solver: 'both' })))).toEqual(['2026-10-22-angle'])
   })
 
+  it('shows finished teasers nobody solved for "nobody", without open ones', () => {
+    expect(slugs(viewArchive(teasers, view({ solver: 'nobody' })))).toEqual(['2026-10-28-nobody'])
+  })
+
   it('combines with search', () => {
     expect(slugs(viewArchive(teasers, view({ solver: 'armen', query: 'drunk' })))).toEqual(['2026-10-25-drunk'])
     expect(viewArchive(teasers, view({ solver: 'aramayis', query: 'drunk' }))).toEqual([])
@@ -80,5 +84,6 @@ describe('isFiltered', () => {
     expect(isFiltered(view({ query: ' ' }))).toBe(false)
     expect(isFiltered(view({ query: 'king' }))).toBe(true)
     expect(isFiltered(view({ solver: 'both' }))).toBe(true)
+    expect(isFiltered(view({ solver: 'nobody' }))).toBe(true)
   })
 })
