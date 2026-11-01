@@ -49,8 +49,9 @@ Node **22.22.0** (`.nvmrc`; the workflows read it). Dependencies are pinned to e
   `score.ts`, `select.ts` (current teaser = newest open; archive = everything else), `router.ts` (hash router:
   `#/`, `#/calendar`, `#/archive`, `#/t/<file-name>`; each in-app navigation stores the screen it came from in
   `history.state`, which drives the teaser page's Back label and the active tab), `dates.ts`, `archive.ts`
-  (Archive search by title, solver filter All/Aramayis/Armen/Both where a name includes joint solves,
-  newest/oldest order), `calendar.ts` (month grid, Monday first; a teaser marks the day it was given, and its
+  (Archive search by title, newest/oldest order, solver filter chips Aramayis/Armen/Both/Nobody where a
+  name includes joint solves and Nobody means finished but unsolved; no chip selected shows everything, tapping
+  the selected chip again clears it, and "Show all" clears search and filter), `calendar.ts` (month grid, Monday first; a teaser marks the day it was given, and its
   days until `solved_on`, or until today while open, form a "still solving" stretch).
 - `build/teasersPlugin.ts`: turns each `teasers/*.md` into a module at build time. **A malformed teaser fails the
   build**, so a typo can't break the live app. `tests/teasers.test.ts` checks every real file too.

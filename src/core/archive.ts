@@ -2,8 +2,9 @@
 import { newestFirst } from './select'
 import type { Person, Teaser } from './teaser'
 
-/** Who solved it: everyone's teasers, one person's (including ones solved together), or only joint solves. */
-export type SolverFilter = 'all' | Person | 'both'
+/** Who solved it: everyone's teasers, one person's (including ones solved together), only joint solves,
+ * or the finished teasers neither of you solved. */
+export type SolverFilter = 'all' | Person | 'both' | 'nobody'
 export type DateOrder = 'newest' | 'oldest'
 
 export interface ArchiveView {
@@ -38,6 +39,7 @@ export function matchesSolver(teaser: Teaser, solver: SolverFilter): boolean {
   if (solver === 'all') return true
   if (teaser.status !== 'solved') return false
   if (solver === 'both') return teaser.solvedBy.length === 2
+  if (solver === 'nobody') return teaser.solvedBy.length === 0
   return teaser.solvedBy.includes(solver)
 }
 
