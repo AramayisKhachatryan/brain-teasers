@@ -106,7 +106,27 @@ Text.
     const body = '## Problem\nTails (probability $\\tfrac12$): start over, so $1 + E$.\n'
     const html = parseTeaserFile(NAME, teaserFile({ body })).problem
     expect(html.match(/class="katex"/g)).toHaveLength(2)
-    expect(html).toContain('): start over, so ')
+    expect(html.replace(/<[^>]+>/g, '')).toContain('): start over, so ')
+  })
+
+  it('keeps inline math and the punctuation after it on one line', () => {
+    const html = parseTeaserFile(NAME, teaserFile({ body: '## Problem\nSo $E = 6$. Done (at least $m + 2$), yes.\n' })).problem
+    expect(html.match(/<span class="math-inline">/g)).toHaveLength(2)
+    expect(html).toMatch(/<\/span>\.<\/span> Done/)
+    expect(html).toMatch(/<\/span>\),<\/span> yes/)
+  })
+
+  it('renders a $$ block that follows a line of text without a blank line', () => {
+    const body = '## Problem\nThe amount is\n$$\n\\tfrac{a}{2} + \\tfrac{b}{2},\n$$\nplus 1 if odd.\n'
+    const html = parseTeaserFile(NAME, teaserFile({ body })).problem
+    expect(html).toContain('katex-display')
+    expect(html).not.toContain('$$')
+    expect(html).toContain('plus 1 if odd.')
+  })
+
+  it('allows $$ inside code', () => {
+    const html = parseTeaserFile(NAME, teaserFile({ body: '## Problem\nType `$$` twice:\n\n```\n$$\n```\n' })).problem
+    expect(html).toContain('<code>$$</code>')
   })
 
   it('renders $$…$$ inside a paragraph as display math', () => {
@@ -160,6 +180,7 @@ describe('parseTeaserFile: malformed files fail with a clear message', () => {
     ['solved_on on an open teaser', NAME, teaserFile({ extraFrontMatter: 'solved_on: 2026-10-29\n' }), /solved_on is only for solved teasers/],
     ['solved_on before the date', NAME, teaserFile({ status: 'solved', extraFrontMatter: 'solved_on: 2026-10-28\n', body: '## Problem\nP\n## Solution\nS\n' }), /before the teaser's date/],
     ['impossible solved_on', NAME, teaserFile({ status: 'solved', extraFrontMatter: 'solved_on: 2026-10-32\n', body: '## Problem\nP\n## Solution\nS\n' }), /solved_on must be a real date/],
+    ['unrendered display math', NAME, teaserFile({ body: '## Problem\nSee $$ x $$ here.\n' }), /display math \(\$\$ … \$\$\) that didn't render/],
     ['broken math', NAME, teaserFile({ body: '## Problem\nFind $\\frac{1}$ now.\n' }), /could not render "## Problem"/],
   ]
 

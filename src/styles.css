@@ -399,6 +399,11 @@ p {
   font-size: 1.06em;
 }
 
+/* Inline math stays on one line with the punctuation after it. Longer formulas belong in a $$ block. */
+.prose .math-inline {
+  white-space: nowrap;
+}
+
 /* Long formulas scroll sideways in their own box instead of widening the page. */
 .prose .katex-display {
   margin: 0.9em 0;
