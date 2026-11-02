@@ -399,7 +399,8 @@
     "category": "probability",
     "link": "https://brainstellar.com/puzzles/medium/109",
     "question": "Snow-particles are falling on the ground one after another. A particular snowflake turns out to be of type \"Stellar Dendrite\" with probability 'p' if its previous particle was also Stellar Dendrite, and with probability 'q' if previous one was something else. If a snowflake is picked from ground, what is the probability that it is Stellar Dendrite?",
-    "status": "available"
+    "status": "used",
+    "teaser": "2026-11-02-pattern-on-snowflakes"
   },
   {
     "id": "brainstellar-110",
