@@ -51,8 +51,8 @@ notifications on gets "New teaser: <title>". How it works:
   "Not now" hides the card for 3 days. `public/push-sw.js` (imported into the service worker) shows the notification.
 - **Setup (pending since 2 Nov 2026; Aramayis will do it later):** the private half of the key in `src/core/pushKey.ts`
   was never kept, so at setup time: generate a new pair (`npx web-push generate-vapid-keys`), put the public key in
-  `src/core/pushKey.ts`, and get the private key into the GitHub secret `VAPID_PRIVATE_KEY` (Settings → Secrets and
-  variables → Actions). Showing a private key in chat needs Aramayis's explicit OK first. No phone has a code yet, so
+  `src/core/pushKey.ts`, set `NOTIFICATIONS_READY = true` there (until then the Home card is hidden), and get the
+  private key into the GitHub secret `VAPID_PRIVATE_KEY` (Settings → Secrets and variables → Actions). Showing a private key in chat needs Aramayis's explicit OK first. No phone has a code yet, so
   nothing is lost by the new key. Until the secret exists, the notify job only logs a warning.
 - **When Aramayis pastes a code** ("here is Armen's code: teasers-push:…"), add it to `notifications/subscriptions.json` as
   `{ "person": "armen", "added": "<date>", "sealed": "<code>" }` (replace that person's old entry), commit, merge.
