@@ -12,7 +12,7 @@ export const DISPLAY_NAME: Record<Person, string> = {
 export type Status = 'open' | 'solved'
 
 export interface Teaser {
-  /** File name without `.md`, e.g. `2026-10-29-broken-stick`. Used in URLs. */
+  /** File name without `.md`, e.g. `2026-10-29-twelve-balls`. Used in URLs. */
   slug: string
   /** `YYYY-MM-DD` */
   date: string

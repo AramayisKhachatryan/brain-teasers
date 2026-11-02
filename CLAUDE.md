@@ -25,19 +25,37 @@ The file format and validation rules are in [`teasers/README.md`](teasers/README
 (the day they finished; solving often takes more than a day), then `## Problem`, `## Hints`, `## Solution`,
 `## Notes`. Teasers #1 to #7 (22–29 Oct 2026) were imported from the list and notes Aramayis sent.
 
+### Daily teaser (automatic, since 3 Nov 2026)
+
+A new teaser appears every morning before 8:00 Armenian time, posted daily whether or not the previous one is
+solved. `.github/workflows/daily-teaser.yml` runs at 03:35 UTC: `node scripts/daily-teaser.ts` picks a random
+`available` puzzle from `puzzles/brainstellar.json` (logic in `src/core/daily.ts`), writes it as today's open teaser,
+marks it `used`, runs tests and build, pushes to `main` as github-actions[bot] (no PR) and starts the Deploy
+workflow. If a teaser dated today already exists, it adds nothing. It can be run by hand from the Actions tab
+("Daily teaser" → Run workflow). The bank (see `puzzles/README.md`) holds questions only, never hints or
+solutions; it had 64 available puzzles on 2 Nov 2026, so it runs out around early January 2027: tell Aramayis a
+few weeks before, and refill it with more questions. Scheduled workflows stop after 60 days without commits.
+
 What Aramayis says, and what to do:
 
-- **"Add a new teaser: …"** / **"give us a new teaser"**: create the file with today's date, `status: open`,
-  `solved_by: []` and only `## Problem`. Then commit, merge and deploy. If asked to pick, choose a
-  quant-interview style or simply interesting puzzle that isn't a famous classic, and check the archive for repeats.
+- **"Add a new teaser: …"** / **"give us a new teaser"**: create the file with the date Aramayis gives (or
+  today's), `status: open`, `solved_by: []` and only `## Problem`. Then commit, merge and deploy. If asked to pick,
+  take an `available` puzzle from `puzzles/brainstellar.json`, or choose a quant-interview style or simply
+  interesting puzzle that isn't a famous classic, and check the archive for repeats. **If the puzzle is in the bank,
+  mark it `used`** (with `teaser`) so the daily job never posts it again; if it's too close to a bank puzzle, mark
+  that one `skip` with a `note`. A teaser dated today means the daily job adds nothing that day.
   **The repo is public: never put hints or the solution in the file while it's open**, not even in a commit message.
 - **"Give us a hint"**: give a hint that doesn't spoil the answer, and remember it (and who asked) so it can be
   recorded later. Hints live only in the chat until the teaser is solved. If the teaser is finished in a new chat
   that doesn't know the hints, ask Aramayis for them.
 - **"We're done: I solved it, Armen didn't"** (or similar): set `solved_by`, `status: solved` and `solved_on`
   (that day, in Armenian time), and add `## Hints` (the hints given, in order, with who asked; leave the section
-  out if there were none), `## Solution` (full reasoning) and `## Notes` (approaches, wrong turns, "no hints").
-  Then commit, merge, deploy, and report the new score.
+  out if there were none), `## Solution` (full reasoning, written by Claude) and `## Notes` (approaches, wrong
+  turns, "no hints"). For a teaser from the bank, end the Notes with
+  `Source: [BrainStellar #N](link)` (find it by `teaser` in `puzzles/brainstellar.json`); never link it while open,
+  because the page shows the solution. Then commit, merge, deploy, and report the new score.
+  With a new teaser every day, several can be open at once: Home shows the newest, and older open ones are in
+  the Archive and Calendar as "Still open".
 - Math: use `$…$` and `$$…$$` (KaTeX) and keep formulas short enough to read on a phone.
 
 ## Stack and layout
@@ -102,7 +120,8 @@ In screenshots, Inter stands in for the iPhone's system font.
 ## Git and deploy
 
 - Claude may commit, push, pull, open pull requests and merge them into `main` without asking.
-  Flow: work on a branch → PR → merge. `.github/workflows/check.yml` tests and builds every PR;
+  Flow: work on a branch → PR → merge (only the daily-teaser workflow pushes to `main` directly).
+  `.github/workflows/check.yml` tests and builds every PR;
   `.github/workflows/deploy.yml` tests, builds and deploys to GitHub Pages on every push to `main`.
 - **Deleting is fine when needed** (files, code, features, merged branches), as long as it stays recoverable
   from git: delete through normal commits.

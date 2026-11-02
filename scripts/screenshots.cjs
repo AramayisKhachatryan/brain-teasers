@@ -29,8 +29,8 @@ const SHOTS = [
   { name: 'calendar-two-on-a-day', build: 'screens', hash: '#/calendar', taps: [['button', /^Wednesday 21 October/]] },
   { name: 'teaser-from-calendar', build: 'real', hash: '#/calendar', taps: [['button', /^Saturday 24 October/]] },
   { name: 'archive', build: 'screens', hash: '#/archive' },
-  { name: 'teaser', build: 'screens', hash: '#/t/2026-10-27-broken-stick' },
-  { name: 'teaser-unfolded', build: 'screens', hash: '#/t/2026-10-27-broken-stick', open: ['Hints', 'Solution'], fullPage: true },
+  { name: 'teaser', build: 'screens', hash: '#/t/2026-10-27-two-random-points' },
+  { name: 'teaser-unfolded', build: 'screens', hash: '#/t/2026-10-27-two-random-points', open: ['Hints', 'Solution'], fullPage: true },
 ]
 
 async function main() {
