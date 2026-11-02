@@ -25,13 +25,15 @@ The file format and validation rules are in [`teasers/README.md`](teasers/README
 (the day they finished; solving often takes more than a day), then `## Problem`, `## Hints`, `## Solution`,
 `## Notes`. Teasers #1 to #7 (22–29 Oct 2026) were imported from the list and notes Aramayis sent.
 
-### Daily teaser (automatic, since 3 Nov 2026)
+### Daily teaser (automatic, first run 4 Nov 2026)
 
 A new teaser appears every morning before 8:00 Armenian time, posted daily whether or not the previous one is
 solved. `.github/workflows/daily-teaser.yml` runs at 03:35 UTC: `node scripts/daily-teaser.ts` picks a random
 `available` puzzle from `puzzles/brainstellar.json` (logic in `src/core/daily.ts`), writes it as today's open teaser,
 marks it `used`, runs tests and build, pushes to `main` as github-actions[bot] (no PR) and starts the Deploy
-workflow. If a teaser dated today already exists, it adds nothing. It can be run by hand from the Actions tab
+workflow. If a teaser dated today already exists, it adds nothing. **"Don't add the automatic teaser tomorrow,
+I'll give it myself"**: add that date to `puzzles/days-off.json` (before 07:35 Yerevan time), commit, merge; the job
+then adds nothing that day. It can be run by hand from the Actions tab
 ("Daily teaser" → Run workflow). The bank (see `puzzles/README.md`) holds questions only, never hints or
 solutions; it had 64 available puzzles on 2 Nov 2026, so it runs out around early January 2027: tell Aramayis a
 few weeks before, and refill it with more questions. Scheduled workflows stop after 60 days without commits.
