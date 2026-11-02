@@ -17,16 +17,30 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    outputs:
+      new_teasers: ${{ steps.new.outputs.teasers }}
+      new_count: ${{ steps.new.outputs.count }}
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
         with:
           node-version-file: .nvmrc
           cache: npm
+      - id: pages
+        uses: actions/configure-pages@v5
+      # The live site's teaser list, to find which teasers this deploy adds (for notifications).
+      - name: Fetch the live teasers.json
+        run: |
+          if curl -fsS -H 'Cache-Control: no-cache' "${{ steps.pages.outputs.base_url }}/teasers.json?nocache=$(date +%s)" -o "$RUNNER_TEMP/live.json"; then
+            mv "$RUNNER_TEMP/live.json" "$RUNNER_TEMP/previous-teasers.json"
+          else
+            echo "No live teasers.json yet."
+          fi
       - run: npm ci
       - run: npm test
       - run: npm run build
-      - uses: actions/configure-pages@v5
+      - id: new
+        run: node scripts/new-teasers.ts "$RUNNER_TEMP/previous-teasers.json" dist/teasers.json
       - uses: actions/upload-pages-artifact@v4
         with:
           path: dist
@@ -40,3 +54,22 @@ jobs:
     steps:
       - id: deployment
         uses: actions/deploy-pages@v4
+
+  # After the new teaser is live, so tapping the notification opens it.
+  notify:
+    needs: [build, deploy]
+    if: needs.build.outputs.new_count != '' && needs.build.outputs.new_count != '0'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: node scripts/notify.ts
+        env:
+          NEW_TEASERS: ${{ needs.build.outputs.new_teasers }}
+          VAPID_PRIVATE_KEY: ${{ secrets.VAPID_PRIVATE_KEY }}

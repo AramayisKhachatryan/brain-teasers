@@ -48,6 +48,8 @@ export default defineConfig({
         clientsClaim: true,
         cleanupOutdatedCaches: true,
         navigateFallback: 'index.html',
+        // Push notification handlers (public/push-sw.js).
+        importScripts: ['push-sw.js'],
         // Precache everything the app needs offline. KaTeX also ships .woff/.ttf copies that iOS never uses,
         // and Literata subsets for scripts we don't write in.
         globPatterns: ['**/*.{html,js,css,svg,png,ico,woff2}'],

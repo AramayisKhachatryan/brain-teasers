@@ -17,6 +17,7 @@ const VIEWPORTS = {
 
 const SHOTS = [
   { name: 'home', build: 'real', hash: '#/' },
+  { name: 'home-notify-code', build: 'real', hash: '#/', permission: 'granted', storage: { 'teasers.notificationCode': 'teasers-push:BExampleCode' }, scrollToEnd: true },
   { name: 'archive-real', build: 'real', hash: '#/archive' },
   { name: 'archive-search', build: 'real', hash: '#/archive', search: 'king' },
   { name: 'archive-both-oldest', build: 'real', hash: '#/archive', taps: [['button', 'Both'], ['button', 'Sorted Newest first']] },
@@ -46,11 +47,22 @@ async function main() {
         colorScheme,
         serviceWorkers: 'block',
       })
+      // As on a phone that has allowed notifications (the card's "copy code" step needs it).
+      await context.grantPermissions(['notifications'])
       for (const shot of SHOTS) {
         const page = await context.newPage()
         page.on('console', (msg) => msg.type() === 'error' && problems.push(`${shot.name}: ${msg.text()}`))
         page.on('pageerror', (err) => problems.push(`${shot.name}: ${err.message}`))
         await page.clock.setFixedTime(TODAY)
+        // Headless Chromium reports notifications as blocked; report what a phone would ("not asked yet" by default).
+        await page.addInitScript((permission) => {
+          if ('Notification' in window) Object.defineProperty(Notification, 'permission', { get: () => permission })
+        }, shot.permission ?? 'default')
+        if (shot.storage) {
+          await page.addInitScript((entries) => {
+            for (const [key, value] of Object.entries(entries)) localStorage.setItem(key, value)
+          }, shot.storage)
+        }
         await page.goto(`${BASE}/${shot.build}/index.html${shot.hash}`)
         await page.waitForLoadState('networkidle')
         await page.evaluate(() => document.fonts.ready)
@@ -65,6 +77,7 @@ async function main() {
           await page.keyboard.press('Enter') // the Search key closes the keyboard
         }
         await page.waitForTimeout(450) // screen fade and fold transitions (260ms)
+        if (shot.scrollToEnd) await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight))
         const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth)
         if (overflow > 0) problems.push(`${shot.name} ${viewportName}: ${overflow}px horizontal overflow`)
         if (shot.fullPage) {

@@ -72,6 +72,11 @@ describe('planDailyTeaser', () => {
     expect(plan).toEqual({ action: 'skip', reason: 'there is already a teaser dated 2026-11-03' })
   })
 
+  it('adds another teaser on the same day when asked for an extra one', () => {
+    const plan = planDailyTeaser({ bank, teaserFiles: ['2026-11-03-splitting-stones.md'], date: '2026-11-03', randomIndex: () => 0, extra: true })
+    expect(plan).toMatchObject({ action: 'add', fileName: '2026-11-03-puzzle-2.md' })
+  })
+
   it('adds nothing when the bank is used up', () => {
     const plan = planDailyTeaser({ bank: [puzzle(1, 'used')], teaserFiles: [], date: '2026-11-03', randomIndex: () => 0 })
     expect(plan).toEqual({ action: 'skip', reason: 'the puzzle bank has no unused puzzles left' })
