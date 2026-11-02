@@ -1,7 +1,7 @@
 // Turning on new-teaser notifications on this phone. iPhones allow web push only for apps added to the
 // Home Screen (iOS 16.4+), and only right after a tap. The phone's subscription is sealed (src/core/seal.ts)
 // into a code that goes into notifications/subscriptions.json.
-import { VAPID_PUBLIC_KEY } from './core/pushKey'
+import { NOTIFICATIONS_READY, VAPID_PUBLIC_KEY } from './core/pushKey'
 import { base64urlToBytes, sealSubscription } from './core/seal'
 
 const STATE_KEY = 'teasers.notifications'
@@ -31,7 +31,7 @@ function write(key: string, value: string): void {
 }
 
 export function canUsePush(): boolean {
-  return 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window
+  return NOTIFICATIONS_READY && 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window
 }
 
 const NOT_NOW_DAYS = 3
