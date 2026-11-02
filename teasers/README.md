@@ -5,6 +5,9 @@ then a short name in lowercase letters, digits and dashes). Solving can take mor
 current until it's solved, and `solved_on` records the day we finished. The app bundles every file here at build time,
 so adding or changing a file and merging it to `main` publishes it. The score is computed from these files.
 
+Most teasers come from the puzzle bank in [`puzzles/`](../puzzles/): a GitHub job adds one every morning before
+8:00 Armenian time. When one of those is solved, its Notes end with `Source: [BrainStellar #N](link)`.
+
 ## Format
 
 ```markdown

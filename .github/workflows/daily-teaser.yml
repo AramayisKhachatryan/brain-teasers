@@ -1,0 +1,48 @@
+name: Daily teaser
+
+# Every morning: add a random unused puzzle from puzzles/brainstellar.json as today's teaser, then deploy.
+# 03:35 UTC is 07:35 in Yerevan (UTC+4), so the teaser is live before 8:00 even if GitHub starts the run late.
+on:
+  schedule:
+    - cron: '35 3 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: daily-teaser
+  cancel-in-progress: false
+
+jobs:
+  add:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: main
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - id: pick
+        run: node scripts/daily-teaser.ts
+      # Same checks as every deploy: nothing is pushed unless the new teaser passes.
+      - if: steps.pick.outputs.added == 'true'
+        run: npm test && npm run build
+      - if: steps.pick.outputs.added == 'true'
+        env:
+          TITLE: ${{ steps.pick.outputs.title }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add teasers puzzles
+          git commit -m "Daily teaser: $TITLE"
+          git push origin HEAD:main
+      # A push made by this workflow doesn't start other workflows, so start the deploy explicitly.
+      - if: steps.pick.outputs.added == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run deploy.yml --ref main

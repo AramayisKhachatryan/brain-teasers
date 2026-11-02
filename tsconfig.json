@@ -1,11 +1,18 @@
 {
   "compilerOptions": {
     "target": "ES2022",
-    "lib": ["ES2023", "DOM", "DOM.Iterable"],
+    "lib": [
+      "ES2023",
+      "DOM",
+      "DOM.Iterable"
+    ],
     "module": "ESNext",
     "moduleResolution": "bundler",
     "jsx": "react-jsx",
-    "types": ["node", "vite/client"],
+    "types": [
+      "node",
+      "vite/client"
+    ],
     "strict": true,
     "noEmit": true,
     "isolatedModules": true,
@@ -13,7 +20,16 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "allowImportingTsExtensions": true
   },
-  "include": ["src", "build", "tests", "vite.config.ts", "vitest.config.ts", "pwa-assets.config.ts"]
+  "include": [
+    "src",
+    "build",
+    "tests",
+    "scripts/**/*.ts",
+    "vite.config.ts",
+    "vitest.config.ts",
+    "pwa-assets.config.ts"
+  ]
 }
