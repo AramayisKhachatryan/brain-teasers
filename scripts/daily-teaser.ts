@@ -6,11 +6,12 @@
 //   node scripts/daily-teaser.ts --date 2026-11-03
 //   node scripts/daily-teaser.ts --extra      add one even if today already has a teaser ("another teaser")
 import { randomInt } from 'node:crypto'
-import { appendFileSync, readdirSync, readFileSync, writeFileSync } from 'node:fs'
-import { TEASER_TIME_ZONE, dateIn, planDailyTeaser, type BankPuzzle } from '../src/core/daily.ts'
+import { appendFileSync, existsSync, readdirSync, readFileSync, writeFileSync } from 'node:fs'
+import { TEASER_TIME_ZONE, dateIn, planDailyTeaser, type BankPuzzle, type DayOff } from '../src/core/daily.ts'
 
 const BANK = new URL('../puzzles/brainstellar.json', import.meta.url)
 const TEASERS = new URL('../teasers/', import.meta.url)
+const DAYS_OFF = new URL('../puzzles/days-off.json', import.meta.url)
 
 const args = process.argv.slice(2)
 const dryRun = args.includes('--dry-run')
@@ -20,12 +21,14 @@ const date = dateArg ?? dateIn(TEASER_TIME_ZONE, new Date())
 if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) throw new Error(`--date must be YYYY-MM-DD, got "${date}"`)
 
 const bank: BankPuzzle[] = JSON.parse(readFileSync(BANK, 'utf8'))
+const daysOff: DayOff[] = existsSync(DAYS_OFF) ? JSON.parse(readFileSync(DAYS_OFF, 'utf8')) : []
 const plan = planDailyTeaser({
   bank,
   teaserFiles: readdirSync(TEASERS).filter((name) => name.endsWith('.md')),
   date,
   randomIndex: (count) => randomInt(count),
   extra,
+  daysOff,
 })
 
 // Tells the workflow whether to commit and deploy.

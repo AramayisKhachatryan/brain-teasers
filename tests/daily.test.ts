@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
 import { dateIn, planDailyTeaser, slugify, teaserFile, type BankPuzzle } from '../src/core/daily'
 import { FILE_NAME, parseTeaserFile } from '../src/core/parse'
@@ -75,6 +76,20 @@ describe('planDailyTeaser', () => {
   it('adds another teaser on the same day when asked for an extra one', () => {
     const plan = planDailyTeaser({ bank, teaserFiles: ['2026-11-03-splitting-stones.md'], date: '2026-11-03', randomIndex: () => 0, extra: true })
     expect(plan).toMatchObject({ action: 'add', fileName: '2026-11-03-puzzle-2.md' })
+  })
+
+  it('adds nothing on a day off, unless asked for an extra one', () => {
+    const daysOff = [{ date: '2026-11-03', note: 'given by hand' }]
+    const plan = planDailyTeaser({ bank, teaserFiles: [], date: '2026-11-03', randomIndex: () => 0, daysOff })
+    expect(plan).toEqual({ action: 'skip', reason: '2026-11-03 is a day off in puzzles/days-off.json (teaser given by hand)' })
+    expect(planDailyTeaser({ bank, teaserFiles: [], date: '2026-11-04', randomIndex: () => 0, daysOff }).action).toBe('add')
+    expect(planDailyTeaser({ bank, teaserFiles: [], date: '2026-11-03', randomIndex: () => 0, daysOff, extra: true }).action).toBe('add')
+  })
+
+  it('reads a valid puzzles/days-off.json', () => {
+    const daysOff = JSON.parse(readFileSync(new URL('../puzzles/days-off.json', import.meta.url), 'utf8'))
+    expect(Array.isArray(daysOff)).toBe(true)
+    for (const day of daysOff) expect(day.date).toMatch(/^\d{4}-\d{2}-\d{2}$/)
   })
 
   it('adds nothing when the bank is used up', () => {

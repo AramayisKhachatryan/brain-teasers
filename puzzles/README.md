@@ -13,3 +13,6 @@ Each puzzle has a `status`:
 Every morning `.github/workflows/daily-teaser.yml` runs `node scripts/daily-teaser.ts`. It picks a random
 `available` puzzle, writes it as today's open teaser (Armenian date), marks it `used`, runs the tests and the
 build, pushes to `main` and starts the deploy. If a teaser dated today already exists, it adds nothing.
+
+**Days off:** a date in `days-off.json` (`{ "date": "YYYY-MM-DD", "note": "…" }`) gets no automatic teaser, for a
+morning when Aramayis gives the teaser by hand. Add it before 07:35 Yerevan time that day; old entries can stay.

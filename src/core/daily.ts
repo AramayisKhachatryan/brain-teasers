@@ -70,9 +70,15 @@ export type DailyPlan =
   | { action: 'skip'; reason: string }
   | { action: 'add'; puzzle: BankPuzzle; fileName: string; content: string; bank: BankPuzzle[] }
 
+/** A day the daily job leaves alone, because Aramayis gives that day's teaser by hand (puzzles/days-off.json). */
+export interface DayOff {
+  date: string
+  note?: string
+}
+
 /**
- * One teaser a day: none if the day already has one, otherwise a random puzzle that hasn't been used.
- * `extra` adds one anyway, for "give us another teaser".
+ * One teaser a day: none if the day already has one or is a day off, otherwise a random puzzle that hasn't been
+ * used. `extra` adds one anyway, for "give us another teaser".
  */
 export function planDailyTeaser(input: {
   bank: readonly BankPuzzle[]
@@ -80,7 +86,11 @@ export function planDailyTeaser(input: {
   date: string
   randomIndex: (count: number) => number
   extra?: boolean
+  daysOff?: readonly DayOff[]
 }): DailyPlan {
+  if (!input.extra && input.daysOff?.some((day) => day.date === input.date)) {
+    return { action: 'skip', reason: `${input.date} is a day off in puzzles/days-off.json (teaser given by hand)` }
+  }
   if (!input.extra && input.teaserFiles.some((name) => name.startsWith(`${input.date}-`))) {
     return { action: 'skip', reason: `there is already a teaser dated ${input.date}` }
   }
