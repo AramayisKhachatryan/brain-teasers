@@ -70,14 +70,18 @@ export type DailyPlan =
   | { action: 'skip'; reason: string }
   | { action: 'add'; puzzle: BankPuzzle; fileName: string; content: string; bank: BankPuzzle[] }
 
-/** One teaser a day: none if the day already has one, otherwise a random puzzle that hasn't been used. */
+/**
+ * One teaser a day: none if the day already has one, otherwise a random puzzle that hasn't been used.
+ * `extra` adds one anyway, for "give us another teaser".
+ */
 export function planDailyTeaser(input: {
   bank: readonly BankPuzzle[]
   teaserFiles: readonly string[]
   date: string
   randomIndex: (count: number) => number
+  extra?: boolean
 }): DailyPlan {
-  if (input.teaserFiles.some((name) => name.startsWith(`${input.date}-`))) {
+  if (!input.extra && input.teaserFiles.some((name) => name.startsWith(`${input.date}-`))) {
     return { action: 'skip', reason: `there is already a teaser dated ${input.date}` }
   }
   const available = input.bank.filter((puzzle) => puzzle.status === 'available')
@@ -85,6 +89,7 @@ export function planDailyTeaser(input: {
 
   const puzzle = available[input.randomIndex(available.length)]
   const { fileName, content } = teaserFile(puzzle, input.date)
+  if (input.teaserFiles.includes(fileName)) return { action: 'skip', reason: `teasers/${fileName} already exists` }
   const teaser = fileName.slice(0, -'.md'.length)
   const bank = input.bank.map((entry) => (entry.id === puzzle.id ? { ...entry, status: 'used' as const, teaser } : entry))
   return { action: 'add', puzzle, fileName, content, bank }

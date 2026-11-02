@@ -36,12 +36,34 @@ workflow. If a teaser dated today already exists, it adds nothing. It can be run
 solutions; it had 64 available puzzles on 2 Nov 2026, so it runs out around early January 2027: tell Aramayis a
 few weeks before, and refill it with more questions. Scheduled workflows stop after 60 days without commits.
 
+### Notifications
+
+When a deploy publishes a new open teaser (the morning one, or one Claude adds), each phone that turned
+notifications on gets "New teaser: <title>". How it works:
+
+- Every build publishes `teasers.json` (slug, date, title, status). `.github/workflows/deploy.yml` fetches the live one
+  first, `scripts/new-teasers.ts` finds new open teasers, and after the deploy the notify job runs `scripts/notify.ts`
+  (web-push) for every phone in `notifications/subscriptions.json`. Nothing is announced if the live site had no
+  `teasers.json` yet, or when a teaser is only edited or solved.
+- The phone side: a card on Home ("Turn on notifications", `src/ui/NotifyCard.tsx`, `src/push.ts`) asks for permission,
+  subscribes with the app's public key (`src/core/pushKey.ts`), and shows a code starting with `teasers-push:`. The code is
+  the subscription sealed with that public key (`src/core/seal.ts`), so it can be committed; only the private key opens it.
+  "Not now" hides the card for 3 days. `public/push-sw.js` (imported into the service worker) shows the notification.
+- **Setup (pending since 2 Nov 2026; Aramayis will do it later):** the private key must be saved as the GitHub secret
+  `VAPID_PRIVATE_KEY` (Settings → Secrets and variables → Actions). Until then the notify job only logs a warning.
+  The key was given to Aramayis in chat; if it's lost, generate a new pair (`web-push generate-vapid-keys`), replace
+  `src/core/pushKey.ts`, and every phone turns notifications on again.
+- **When Aramayis pastes a code** ("here is Armen's code: teasers-push:…"), add it to `notifications/subscriptions.json` as
+  `{ "person": "armen", "added": "<date>", "sealed": "<code>" }` (replace that person's old entry), commit, merge.
+- iPhones only allow this for the Home Screen app (iOS 16.4+). A phone that turned notifications off shows up as a
+  warning in the notify job; it needs a new code.
+
 What Aramayis says, and what to do:
 
 - **"Add a new teaser: …"** / **"give us a new teaser"**: create the file with the date Aramayis gives (or
   today's), `status: open`, `solved_by: []` and only `## Problem`. Then commit, merge and deploy. If asked to pick,
-  take an `available` puzzle from `puzzles/brainstellar.json`, or choose a quant-interview style or simply
-  interesting puzzle that isn't a famous classic, and check the archive for repeats. **If the puzzle is in the bank,
+  run `node scripts/daily-teaser.ts --extra` (a random `available` puzzle for today, marked `used`), or choose a
+  quant-interview style or simply interesting puzzle that isn't a famous classic, and check the archive for repeats. **If the puzzle is in the bank,
   mark it `used`** (with `teaser`) so the daily job never posts it again; if it's too close to a bank puzzle, mark
   that one `skip` with a `note`. A teaser dated today means the daily job adds nothing that day.
   **The repo is public: never put hints or the solution in the file while it's open**, not even in a commit message.
@@ -112,6 +134,7 @@ reloading twice, and never while someone is reading a teaser.
   (`sheet-*.png` put light and dark side by side). "Today" is fixed at 30 Oct 2026 so the Calendar shots are
   reproducible. Fails on console errors or horizontal overflow.
 - `npm run test:updates`: the update-flow test above.
+- `npm run test:push`: checks that a push makes the service worker show the "New teaser" notification.
 - `npm run icons`: regenerate icons from `public/icon.svg`.
 
 Playwright comes pre-installed in the cloud environment (`require('playwright')`); it isn't a dependency.

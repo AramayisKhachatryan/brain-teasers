@@ -5,6 +5,7 @@ import type { Score } from '../core/score'
 import type { Teaser } from '../core/teaser'
 import { Link, Prose, SolvedLine, SolverMarks } from './bits'
 import { Fold } from './Fold'
+import { NotifyCard } from './NotifyCard'
 import { ScoreBoard } from './ScoreBoard'
 
 export function HomeScreen(props: { current: Teaser | null; lastSolved: Teaser | null; score: Score }) {
@@ -22,7 +23,7 @@ export function HomeScreen(props: { current: Teaser | null; lastSolved: Teaser |
       ) : (
         <div className="empty">
           <h1 className="empty__title">Nothing to solve right now</h1>
-          <p className="empty__text">Ask Claude for a new teaser. It shows up here once it’s published.</p>
+          <p className="empty__text">A new teaser arrives every morning before 8:00. Want one sooner? Ask Claude.</p>
           {lastSolved && (
             <Link to={{ name: 'teaser', slug: lastSolved.slug }} className="empty__last tappable">
               <span className="empty__last-label">Last one</span>
@@ -34,6 +35,7 @@ export function HomeScreen(props: { current: Teaser | null; lastSolved: Teaser |
           )}
         </div>
       )}
+      <NotifyCard />
     </main>
   )
 }
