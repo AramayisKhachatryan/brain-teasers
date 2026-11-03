@@ -1,4 +1,5 @@
 ---
+number: 8
 date: 2026-10-31
 title: Candies in a circle
 status: solved

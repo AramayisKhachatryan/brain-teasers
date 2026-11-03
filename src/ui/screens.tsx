@@ -3,7 +3,7 @@ import { fullDate, longDate } from '../core/dates'
 import { cameFrom, goBack, type Route } from '../core/router'
 import type { Score } from '../core/score'
 import type { Teaser } from '../core/teaser'
-import { Link, Prose, SolvedLine, SolverMarks } from './bits'
+import { Link, Prose, SolvedLine, SolverMarks, TeaserTitle } from './bits'
 import { Fold } from './Fold'
 import { NotifyCard } from './NotifyCard'
 import { ScoreBoard } from './ScoreBoard'
@@ -16,7 +16,9 @@ export function HomeScreen(props: { current: Teaser | null; lastSolved: Teaser |
       {current ? (
         <article className="teaser">
           <p className="teaser__date">{longDate(current.date)}</p>
-          <h1 className="teaser__title">{current.title}</h1>
+          <h1 className="teaser__title">
+            <TeaserTitle teaser={current} />
+          </h1>
           <Prose html={current.problem} className="problem" />
           <p className="nudge">Stuck? Ask Claude for a hint.</p>
         </article>
@@ -27,7 +29,9 @@ export function HomeScreen(props: { current: Teaser | null; lastSolved: Teaser |
           {lastSolved && (
             <Link to={{ name: 'teaser', slug: lastSolved.slug }} className="empty__last tappable">
               <span className="empty__last-label">Last one</span>
-              <span className="empty__last-title">{lastSolved.title}</span>
+              <span className="empty__last-title">
+                <TeaserTitle teaser={lastSolved} />
+              </span>
               <span className="row__solvers">
                 <SolverMarks teaser={lastSolved} />
               </span>
@@ -75,7 +79,9 @@ export function TeaserScreen({ teaser }: { teaser: Teaser | undefined }) {
       {back}
       <article className="teaser teaser--page">
         <p className="teaser__date">{fullDate(teaser.date)}</p>
-        <h1 className="teaser__title">{teaser.title}</h1>
+        <h1 className="teaser__title">
+          <TeaserTitle teaser={teaser} />
+        </h1>
         <SolvedLine teaser={teaser} />
         <Prose html={teaser.problem} className="problem" />
       </article>

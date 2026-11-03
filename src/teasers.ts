@@ -7,4 +7,5 @@ const modules = import.meta.glob<Teaser>(['@teasers/*.md', '!@teasers/README.md'
   import: 'default',
 })
 
-export const teasers: readonly Teaser[] = Object.values(modules)
+/** In order: #1 first. */
+export const teasers: readonly Teaser[] = Object.values(modules).sort((a, b) => a.number - b.number)

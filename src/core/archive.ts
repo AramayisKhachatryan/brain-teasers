@@ -27,12 +27,15 @@ export function normalize(text: string): string {
     .trim()
 }
 
-/** Every word of the query appears somewhere in the title, in any order. */
-export function matchesQuery(title: string, query: string): boolean {
-  const haystack = normalize(title)
+/**
+ * Every word of the query appears somewhere in the title, in any order. A number (with or without "#") also
+ * finds the teaser with that number: "11" and "#11" find #11.
+ */
+export function matchesQuery(teaser: Pick<Teaser, 'number' | 'title'>, query: string): boolean {
+  const haystack = normalize(teaser.title)
   return normalize(query)
     .split(' ')
-    .every((word) => haystack.includes(word))
+    .every((word) => haystack.includes(word) || word === String(teaser.number))
 }
 
 export function matchesSolver(teaser: Teaser, solver: SolverFilter): boolean {
@@ -51,5 +54,5 @@ export function isFiltered(view: ArchiveView): boolean {
 export function viewArchive(teasers: readonly Teaser[], view: ArchiveView): Teaser[] {
   const sorted = newestFirst(teasers)
   if (view.order === 'oldest') sorted.reverse()
-  return sorted.filter((teaser) => matchesQuery(teaser.title, view.query) && matchesSolver(teaser, view.solver))
+  return sorted.filter((teaser) => matchesQuery(teaser, view.query) && matchesSolver(teaser, view.solver))
 }

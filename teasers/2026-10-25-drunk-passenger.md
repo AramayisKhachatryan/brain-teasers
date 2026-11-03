@@ -1,4 +1,5 @@
 ---
+number: 3
 date: 2026-10-25
 title: Drunk airline passenger
 status: solved

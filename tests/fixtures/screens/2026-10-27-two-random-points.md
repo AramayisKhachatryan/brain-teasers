@@ -1,4 +1,5 @@
 ---
+number: 6
 date: 2026-10-27
 title: Two random points
 status: solved

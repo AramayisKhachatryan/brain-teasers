@@ -1,4 +1,5 @@
 ---
+number: 7
 date: 2026-10-29
 title: Twelve balls, three weighings
 status: solved

@@ -4,6 +4,8 @@
 /** One entry of teasers.json, which every build publishes next to the app. */
 export interface ManifestEntry {
   slug: string
+  /** #1, #2, … (missing in lists published before 4 Nov 2026; only `slug` is read from those). */
+  number: number
   date: string
   title: string
   status: 'open' | 'solved'
@@ -28,11 +30,14 @@ export interface PushMessage {
   tag: string
 }
 
+/** "#11 Parking lot", as numberedTitle() in teaser.ts writes it. */
+const numbered = (teaser: ManifestEntry) => `#${teaser.number} ${teaser.title}`
+
 export function notificationFor(teasers: readonly ManifestEntry[]): PushMessage {
-  if (teasers.length === 1) return { title: 'New teaser', body: teasers[0].title, url: './', tag: teasers[0].slug }
+  if (teasers.length === 1) return { title: 'New teaser', body: numbered(teasers[0]), url: './', tag: teasers[0].slug }
   return {
     title: `${teasers.length} new teasers`,
-    body: teasers.map((teaser) => teaser.title).join(', '),
+    body: teasers.map(numbered).join(', '),
     url: './',
     tag: teasers.map((teaser) => teaser.slug).join('+'),
   }

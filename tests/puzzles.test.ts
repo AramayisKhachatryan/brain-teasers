@@ -32,14 +32,14 @@ describe('puzzles/brainstellar.json', () => {
   })
 
   it.each(bank.map((p) => [p.id, p] as const))('%s becomes a valid teaser', (_id, p) => {
-    const { fileName, content } = teaserFile(p, '2030-01-01')
+    const { fileName, content } = teaserFile(p, '2030-01-01', 99)
     expect(() => parseTeaserFile(fileName, content)).not.toThrow()
   })
 
   it('shows money as money, not math', () => {
     for (const number of [104, 1004]) {
       const p = bank.find((entry) => entry.number === number)!
-      const { fileName, content } = teaserFile(p, '2030-01-01')
+      const { fileName, content } = teaserFile(p, '2030-01-01', 99)
       const html = parseTeaserFile(fileName, content).problem
       expect(html).not.toContain('katex')
       expect(html).toContain('$')

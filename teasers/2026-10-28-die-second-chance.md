@@ -1,4 +1,5 @@
 ---
+number: 6
 date: 2026-10-28
 title: Die roll with a second chance
 status: solved

@@ -2,7 +2,7 @@
 import { readdirSync, readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
-import { FILE_NAME, parseTeaserFile } from '../src/core/parse'
+import { FILE_NAME, numberingProblems, parseTeaserFile } from '../src/core/parse'
 
 const dir = fileURLToPath(new URL('../teasers/', import.meta.url))
 const files = readdirSync(dir).filter((name) => name !== 'README.md')
@@ -15,6 +15,10 @@ describe('teasers/', () => {
   it.each(files)('%s is a valid teaser', (name) => {
     expect(() => parseTeaserFile(name, readFileSync(dir + name, 'utf8'))).not.toThrow()
   })
+
+  it('numbers the teasers 1, 2, 3, … in date order', () => {
+    expect(numberingProblems(files.map((name) => parseTeaserFile(name, readFileSync(dir + name, 'utf8'))))).toEqual([])
+  })
 })
 
 describe('tests/fixtures/ (screenshot data)', () => {
@@ -25,5 +29,10 @@ describe('tests/fixtures/ (screenshot data)', () => {
 
   it.each(fixtures)('%s/%s is a valid teaser', (folder, name) => {
     expect(() => parseTeaserFile(name, readFileSync(`${root}${folder}/${name}`, 'utf8'))).not.toThrow()
+  })
+
+  it.each([...new Set(fixtures.map(([folder]) => folder))])('%s/ is numbered 1, 2, 3, … in date order', (folder) => {
+    const names = fixtures.filter(([f]) => f === folder).map(([, name]) => name)
+    expect(numberingProblems(names.map((name) => parseTeaserFile(name, readFileSync(`${root}${folder}/${name}`, 'utf8'))))).toEqual([])
   })
 })

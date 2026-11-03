@@ -1,4 +1,5 @@
 ---
+number: 2
 date: 2026-10-21
 title: Rolling to a hundred
 status: solved

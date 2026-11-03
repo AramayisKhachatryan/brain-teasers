@@ -1,4 +1,5 @@
 ---
+number: 4
 date: 2026-10-23
 title: Bridge at night
 status: solved

@@ -39,6 +39,13 @@ describe('selection', () => {
     ])
   })
 
+  it('on the same day, puts the higher number first, whatever the file names', () => {
+    const first = makeTeaser({ slug: '2026-11-02-splitting-stones', number: 9 })
+    const second = makeTeaser({ slug: '2026-11-02-pattern-on-snowflakes', number: 10, status: 'open' })
+    expect(newestFirst([first, second]).map((t) => t.number)).toEqual([10, 9])
+    expect(currentTeaser([first, second])).toBe(second)
+  })
+
   it('picks the newest open teaser as current', () => {
     expect(currentTeaser([older, solved, newest])).toBe(newest)
   })

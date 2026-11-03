@@ -7,7 +7,7 @@
 //   node scripts/daily-teaser.ts --extra      add one even if today already has a teaser ("another teaser")
 import { randomInt } from 'node:crypto'
 import { appendFileSync, existsSync, readdirSync, readFileSync, writeFileSync } from 'node:fs'
-import { TEASER_TIME_ZONE, dateIn, planDailyTeaser, type BankPuzzle, type DayOff } from '../src/core/daily.ts'
+import { TEASER_TIME_ZONE, dateIn, nextNumber, planDailyTeaser, type BankPuzzle, type DayOff } from '../src/core/daily.ts'
 
 const BANK = new URL('../puzzles/brainstellar.json', import.meta.url)
 const TEASERS = new URL('../teasers/', import.meta.url)
@@ -22,9 +22,12 @@ if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) throw new Error(`--date must be YYYY-MM-D
 
 const bank: BankPuzzle[] = JSON.parse(readFileSync(BANK, 'utf8'))
 const daysOff: DayOff[] = existsSync(DAYS_OFF) ? JSON.parse(readFileSync(DAYS_OFF, 'utf8')) : []
+const teaserFiles = readdirSync(TEASERS).filter((name) => /^\d{4}-\d{2}-\d{2}-.*\.md$/.test(name))
+const number = nextNumber(teaserFiles.map((name) => readFileSync(new URL(name, TEASERS), 'utf8')))
 const plan = planDailyTeaser({
   bank,
-  teaserFiles: readdirSync(TEASERS).filter((name) => name.endsWith('.md')),
+  teaserFiles,
+  number,
   date,
   randomIndex: (count) => randomInt(count),
   extra,
@@ -41,7 +44,7 @@ if (plan.action === 'skip') {
   output('added', 'false')
 } else {
   const left = plan.bank.filter((puzzle) => puzzle.status === 'available').length
-  console.log(`${dryRun ? 'Would add' : 'Added'} teasers/${plan.fileName}: "${plan.puzzle.title}" (${plan.puzzle.id}). ${left} unused puzzles left.`)
+  console.log(`${dryRun ? 'Would add' : 'Added'} teasers/${plan.fileName}: #${number} "${plan.puzzle.title}" (${plan.puzzle.id}). ${left} unused puzzles left.`)
   if (!dryRun) {
     writeFileSync(new URL(plan.fileName, TEASERS), plan.content)
     writeFileSync(BANK, `${JSON.stringify(plan.bank, null, 2)}\n`)

@@ -1,4 +1,5 @@
 ---
+number: 10
 date: 2026-11-02
 title: "Pattern on snowflakes"
 status: solved

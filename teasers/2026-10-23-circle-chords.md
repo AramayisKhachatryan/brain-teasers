@@ -1,4 +1,5 @@
 ---
+number: 2
 date: 2026-10-23
 title: Chords on a circle
 status: solved

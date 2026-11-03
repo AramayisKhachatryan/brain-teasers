@@ -14,6 +14,8 @@ export type Status = 'open' | 'solved'
 export interface Teaser {
   /** File name without `.md`, e.g. `2026-10-29-twelve-balls`. Used in URLs. */
   slug: string
+  /** Its place in the series: #1 is the first teaser we ever did. Shown before the title. */
+  number: number
   /** `YYYY-MM-DD` */
   date: string
   title: string
@@ -27,6 +29,11 @@ export interface Teaser {
   hintCount: number
   solution: string | null
   notes: string | null
+}
+
+/** "#11 Parking lot": the title as it reads in text (notifications, labels). */
+export function numberedTitle(teaser: Pick<Teaser, 'number' | 'title'>): string {
+  return `#${teaser.number} ${teaser.title}`
 }
 
 export function isPerson(value: unknown): value is Person {

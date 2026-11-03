@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { parseTeaserFile } from '../src/core/parse'
+import { numberingProblems, parseTeaserFile } from '../src/core/parse'
 import { teaserFile } from './helpers'
 
 const NAME = '2026-10-29-even-rolls.md'
@@ -22,6 +22,7 @@ describe('parseTeaserFile: valid files', () => {
     const teaser = parseTeaserFile(NAME, teaserFile())
     expect(teaser).toMatchObject({
       slug: '2026-10-29-even-rolls',
+      number: 1,
       date: '2026-10-29',
       title: 'Even rolls only',
       status: 'open',
@@ -50,6 +51,7 @@ describe('parseTeaserFile: valid files', () => {
 
   it('accepts the comments shown in the documented format', () => {
     const source = `---
+number: 3             # its place in the series
 date: 2026-10-29
 title: The two doors
 status: open          # open while we're solving, solved when we're done
@@ -159,7 +161,11 @@ describe('parseTeaserFile: malformed files fail with a clear message', () => {
     ['unclosed front matter', NAME, '---\ndate: 2026-10-29\n', /not closed/],
     ['invalid YAML', NAME, teaserFile({ title: '[oops' }), /not valid YAML/],
     ['unknown key', NAME, teaserFile({ extraFrontMatter: 'solvedby: []\n' }), /unknown front matter key "solvedby"/],
-    ['missing key', NAME, '---\ndate: 2026-10-29\ntitle: T\nstatus: open\n---\n## Problem\nX\n', /missing "solved_by"/],
+    ['missing key', NAME, '---\nnumber: 1\ndate: 2026-10-29\ntitle: T\nstatus: open\n---\n## Problem\nX\n', /missing "solved_by"/],
+    ['missing number', NAME, '---\ndate: 2026-10-29\ntitle: T\nstatus: open\nsolved_by: []\n---\n## Problem\nX\n', /missing "number"/],
+    ['number zero', NAME, teaserFile({ number: 0 }), /number must be a whole number/],
+    ['number not whole', NAME, teaserFile({ number: '2.5' }), /number must be a whole number/],
+    ['number as text', NAME, teaserFile({ number: '"7"' }), /number must be a whole number/],
     ['impossible date', '2026-02-30-x.md', teaserFile({ date: '2026-02-30' }), /real date/],
     ['date mismatch', NAME, teaserFile({ date: '2026-10-30' }), /does not match the date in the file name/],
     ['empty title', NAME, teaserFile({ title: '""' }), /title must be non-empty/],
@@ -190,5 +196,25 @@ describe('parseTeaserFile: malformed files fail with a clear message', () => {
 
   it('names the file in the error', () => {
     expect(() => parseTeaserFile(NAME, teaserFile({ status: 'done' }))).toThrow(`teasers/${NAME}:`)
+  })
+})
+
+describe('numberingProblems', () => {
+  const t = (slug: string, number: number) => ({ slug, number, date: slug.slice(0, 10) })
+
+  it('accepts 1, 2, 3, … in date order, with two teasers on one day', () => {
+    expect(numberingProblems([t('2026-11-02-b', 2), t('2026-11-02-a', 3), t('2026-11-01-x', 1)])).toEqual([])
+  })
+
+  it('reports a number used twice', () => {
+    expect(numberingProblems([t('2026-11-01-x', 1), t('2026-11-02-a', 1)]).join()).toMatch(/both have number 1/)
+  })
+
+  it('reports a gap', () => {
+    expect(numberingProblems([t('2026-11-01-x', 1), t('2026-11-02-a', 3)]).join()).toMatch(/#2 is missing/)
+  })
+
+  it('reports numbers out of date order', () => {
+    expect(numberingProblems([t('2026-11-02-a', 1), t('2026-11-01-x', 2)]).join()).toMatch(/dated before #1/)
   })
 })
