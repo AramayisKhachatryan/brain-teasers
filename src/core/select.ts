@@ -1,8 +1,8 @@
 import type { Teaser } from './teaser'
 
-/** Newest date first; on the same date, the later file name first. */
+/** Newest first: by date, then by number (two teasers on one day), then by file name. */
 export function newestFirst(teasers: readonly Teaser[]): Teaser[] {
-  return [...teasers].sort((a, b) => (a.date === b.date ? compare(b.slug, a.slug) : compare(b.date, a.date)))
+  return [...teasers].sort((a, b) => compare(b.date, a.date) || b.number - a.number || compare(b.slug, a.slug))
 }
 
 /** The current teaser is the newest open one, or null when everything is solved. */

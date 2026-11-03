@@ -5,6 +5,7 @@ import { SEALED_PREFIX } from '../src/core/seal'
 
 const entry = (slug: string, status: ManifestEntry['status'] = 'open'): ManifestEntry => ({
   slug,
+  number: Number(slug.slice(8, 10)),
   date: slug.slice(0, 10),
   title: `Title ${slug.slice(11)}`,
   status,
@@ -31,7 +32,7 @@ describe('notificationFor', () => {
   it('names the teaser', () => {
     expect(notificationFor([entry('2026-11-03-c')])).toEqual({
       title: 'New teaser',
-      body: 'Title c',
+      body: '#3 Title c',
       url: './',
       tag: '2026-11-03-c',
     })
@@ -40,7 +41,7 @@ describe('notificationFor', () => {
   it('counts several', () => {
     expect(notificationFor([entry('2026-11-03-c'), entry('2026-11-03-d')])).toMatchObject({
       title: '2 new teasers',
-      body: 'Title c, Title d',
+      body: '#3 Title c, #3 Title d',
     })
   })
 })

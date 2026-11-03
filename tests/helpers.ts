@@ -3,6 +3,7 @@ import type { Teaser } from '../src/core/teaser'
 /** Builds a teaser file's text from parts, so each test only spells out what it is about. */
 export function teaserFile(
   options: {
+    number?: number | string
     date?: string
     title?: string
     status?: string
@@ -12,6 +13,7 @@ export function teaserFile(
   } = {},
 ): string {
   const {
+    number = 1,
     date = '2026-10-29',
     title = 'Even rolls only',
     status = 'open',
@@ -19,11 +21,12 @@ export function teaserFile(
     extraFrontMatter = '',
     body = '## Problem\nRoll a die.\n',
   } = options
-  return `---\ndate: ${date}\ntitle: ${title}\nstatus: ${status}\nsolved_by: ${solvedBy}\n${extraFrontMatter}---\n\n${body}`
+  return `---\nnumber: ${number}\ndate: ${date}\ntitle: ${title}\nstatus: ${status}\nsolved_by: ${solvedBy}\n${extraFrontMatter}---\n\n${body}`
 }
 
 export function makeTeaser(overrides: Partial<Teaser> & Pick<Teaser, 'slug'>): Teaser {
   return {
+    number: 1,
     date: overrides.slug.slice(0, 10),
     title: overrides.slug,
     status: 'solved',

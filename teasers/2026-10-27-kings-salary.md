@@ -1,4 +1,5 @@
 ---
+number: 5
 date: 2026-10-27
 title: King's salary
 status: solved

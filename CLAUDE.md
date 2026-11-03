@@ -20,7 +20,8 @@ and Claude is the one who edits those files.
 ## Teaser workflow
 
 The file format and validation rules are in [`teasers/README.md`](teasers/README.md). Summary:
-`teasers/YYYY-MM-DD-short-name.md` (the date it was given), front matter `date`, `title`, `status`
+`teasers/YYYY-MM-DD-short-name.md` (the date it was given), front matter `number` (#1, #2, … in date order, no
+gaps; shown before the title as "#11 Parking lot"; a new teaser gets the next one), `date`, `title`, `status`
 (`open`|`solved`), `solved_by` (`[]`, `[aramayis]`, `[armen]`, `[aramayis, armen]`), optional `solved_on`
 (the day they finished; solving often takes more than a day), then `## Problem`, `## Hints`, `## Solution`,
 `## Notes`. Teasers #1 to #7 (22–29 Oct 2026) were imported from the list and notes Aramayis sent.
@@ -29,7 +30,8 @@ The file format and validation rules are in [`teasers/README.md`](teasers/README
 
 A new teaser appears every morning before 8:00 Armenian time, posted daily whether or not the previous one is
 solved. `.github/workflows/daily-teaser.yml` runs at 03:05 UTC (second try at 03:35, since GitHub sometimes drops scheduled runs): `node scripts/daily-teaser.ts` picks a random
-`available` puzzle from `puzzles/brainstellar.json` (logic in `src/core/daily.ts`), writes it as today's open teaser,
+`available` puzzle from `puzzles/brainstellar.json` (logic in `src/core/daily.ts`), writes it as today's open teaser
+with the next number,
 marks it `used`, runs tests and build, pushes to `main` as github-actions[bot] (no PR) and starts the Deploy
 workflow. If a teaser dated today already exists, it adds nothing. **"Don't add the automatic teaser tomorrow,
 I'll give it myself"**: add that date to `puzzles/days-off.json` (before 07:05 Yerevan time), commit, merge; the job
@@ -63,8 +65,8 @@ notifications on gets "New teaser: <title>". How it works:
 
 What Aramayis says, and what to do:
 
-- **"Add a new teaser: …"** / **"give us a new teaser"**: create the file with the date Aramayis gives (or
-  today's), `status: open`, `solved_by: []` and only `## Problem`. Then commit, merge and deploy. If asked to pick,
+- **"Add a new teaser: …"** / **"give us a new teaser"**: create the file with the next `number`, the date Aramayis
+  gives (or today's), `status: open`, `solved_by: []` and only `## Problem`. Then commit, merge and deploy. If asked to pick,
   run `node scripts/daily-teaser.ts --extra` (a random `available` puzzle for today, marked `used`), or choose a
   quant-interview style or simply interesting puzzle that isn't a famous classic, and check the archive for repeats. **If the puzzle is in the bank,
   mark it `used`** (with `teaser`) so the daily job never posts it again; if it's too close to a bank puzzle, mark
@@ -92,12 +94,12 @@ Node **22.22.0** (`.nvmrc`; the workflows read it). Dependencies are pinned to e
   `score.ts`, `select.ts` (current teaser = newest open; archive = everything else), `router.ts` (hash router:
   `#/`, `#/calendar`, `#/archive`, `#/t/<file-name>`; each in-app navigation stores the screen it came from in
   `history.state`, which drives the teaser page's Back label and the active tab), `dates.ts`, `archive.ts`
-  (Archive search by title, newest/oldest order, solver filter chips Aramayis/Armen/Both/Nobody where a
+  (Archive search by title or number ("11", "#11"), newest/oldest order, solver filter chips Aramayis/Armen/Both/Nobody where a
   name includes joint solves and Nobody means finished but unsolved; no chip selected shows everything, tapping
   the selected chip again clears it, and "Show all" clears search and filter), `calendar.ts` (month grid, Monday first; a teaser marks the day it was given, and its
   days until `solved_on`, or until today while open, form a "still solving" stretch).
 - `build/teasersPlugin.ts`: turns each `teasers/*.md` into a module at build time. **A malformed teaser fails the
-  build**, so a typo can't break the live app. `tests/teasers.test.ts` checks every real file too.
+  build**, so a typo can't break the live app; so does a numbering mistake (a gap, a repeat, numbers out of date order). `tests/teasers.test.ts` checks every real file too.
 - `src/ui/`: screens (Home, Calendar, Archive, Teaser page), the tab bar (Current, Calendar, Archive), folds.
   The Archive's search/filter/sort and the Calendar's month live in `App.tsx`, so they survive opening a teaser
   and coming back. In the Calendar, tapping a day with one teaser opens it; a day with several lists them. `src/styles.css`: all styling and design tokens.

@@ -55,13 +55,26 @@ export function SolverMarks({ teaser }: { teaser: Teaser }) {
   )
 }
 
+/** "#11 Parking lot": the number in pencil grey, kept on one line with the first word of the title. */
+export function TeaserTitle({ teaser }: { teaser: Teaser }) {
+  return (
+    <>
+      <span className="teaser-number">#{teaser.number}</span>
+      {'\u00a0'}
+      {teaser.title}
+    </>
+  )
+}
+
 /** One teaser in a list (Archive, and a day with several teasers in the Calendar). */
 export function TeaserRow({ teaser }: { teaser: Teaser }) {
   return (
     <Link to={{ name: 'teaser', slug: teaser.slug }} className="row tappable">
       <span className="row__date">{shortDate(teaser.date)}</span>
       <span className="row__body">
-        <span className="row__title">{teaser.title}</span>
+        <span className="row__title">
+          <TeaserTitle teaser={teaser} />
+        </span>
         <span className="row__solvers">
           <SolverMarks teaser={teaser} />
         </span>

@@ -1,4 +1,5 @@
 ---
+number: 9
 date: 2026-11-02
 title: Splitting stones
 status: solved

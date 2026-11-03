@@ -20,6 +20,7 @@ const SHOTS = [
   { name: 'home-notify-code', build: 'real', hash: '#/', permission: 'granted', storage: { 'teasers.notificationCode': 'teasers-push:BExampleCode' }, scrollToEnd: true },
   { name: 'archive-real', build: 'real', hash: '#/archive' },
   { name: 'archive-search', build: 'real', hash: '#/archive', search: 'king' },
+  { name: 'archive-search-number', build: 'real', hash: '#/archive', search: '#9' },
   { name: 'archive-both-oldest', build: 'real', hash: '#/archive', taps: [['button', 'Both'], ['button', 'Sorted Newest first']] },
   { name: 'archive-nobody', build: 'real', hash: '#/archive', taps: [['button', 'Nobody']] },
   { name: 'archive-no-match', build: 'real', hash: '#/archive', search: 'pirates', taps: [['button', 'Armen']] },
@@ -73,7 +74,7 @@ async function main() {
           await page.getByRole(role, typeof name === 'string' ? { name, exact: true } : { name }).tap()
         }
         if (shot.search) {
-          await page.getByRole('searchbox', { name: 'Search titles' }).fill(shot.search)
+          await page.getByRole('searchbox', { name: 'Search by title or number' }).fill(shot.search)
           await page.keyboard.press('Enter') // the Search key closes the keyboard
         }
         await page.waitForTimeout(450) // screen fade and fold transitions (260ms)

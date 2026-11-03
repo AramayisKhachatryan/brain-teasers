@@ -26,7 +26,21 @@ describe('search', () => {
     ['SALARY', true],
     ['queen', false],
   ])('"%s" in "King\'s salary": %s', (query, found) => {
-    expect(matchesQuery("King's salary", query)).toBe(found)
+    expect(matchesQuery({ number: 5, title: "King's salary" }, query)).toBe(found)
+  })
+
+  it.each([
+    ['5', true],
+    ['#5', true],
+    ['#5 king', true],
+    ['55', false],
+    ['#6', false],
+  ])('"%s" by number for #5 King\'s salary: %s', (query, found) => {
+    expect(matchesQuery({ number: 5, title: "King's salary" }, query)).toBe(found)
+  })
+
+  it('still finds numbers inside titles', () => {
+    expect(matchesQuery({ number: 1, title: 'Angle-coloring game on an 8×8 board' }, '8')).toBe(true)
   })
 
   it('finds 8x8 typed with a plain x', () => {

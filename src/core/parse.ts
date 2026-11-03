@@ -16,7 +16,7 @@ export class TeaserFileError extends Error {
 export const FILE_NAME = /^(\d{4}-\d{2}-\d{2})-([a-z0-9]+(?:-[a-z0-9]+)*)\.md$/
 const SECTION_ORDER = ['Problem', 'Hints', 'Solution', 'Notes'] as const
 type SectionName = (typeof SECTION_ORDER)[number]
-const FRONT_MATTER_KEYS = ['date', 'title', 'status', 'solved_by'] as const
+const FRONT_MATTER_KEYS = ['number', 'date', 'title', 'status', 'solved_by'] as const
 const OPTIONAL_KEYS = ['solved_on'] as const
 
 // Math follows Pandoc's rule, so money like "$5 or $10" stays text: the opening $ is followed by a
@@ -115,6 +115,11 @@ export function parseTeaserFile(fileName: string, source: string): Teaser {
     if (!(key in fields)) fail(`the front matter is missing "${key}"`)
   }
 
+  const number = fields.number
+  if (typeof number !== 'number' || !Number.isInteger(number) || number < 1) {
+    fail('number must be a whole number: 1 for the first teaser, then one more for each new one')
+  }
+
   const date = fields.date
   if (typeof date !== 'string' || !isCalendarDate(date)) {
     fail('date must be a real date written as YYYY-MM-DD')
@@ -188,6 +193,7 @@ export function parseTeaserFile(fileName: string, source: string): Teaser {
 
   return {
     slug: fileName.slice(0, -'.md'.length),
+    number: number as number,
     date: date as string,
     title: (title as string).trim(),
     status: status as Status,
@@ -276,4 +282,30 @@ function isCalendarDate(value: string): boolean {
 
 function escapeAttr(value: string): string {
   return value.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;')
+}
+
+/**
+ * Checks the numbering across all teasers: #1, #2, … each used once, with no gaps, and in date order
+ * (a later number never has an earlier date). Returns the problems found; empty means all good.
+ */
+export function numberingProblems(teasers: readonly Pick<Teaser, 'slug' | 'number' | 'date'>[]): string[] {
+  const problems: string[] = []
+  const slugOf = new Map<number, string>()
+  for (const teaser of teasers) {
+    const other = slugOf.get(teaser.number)
+    if (other) problems.push(`teasers/${other}.md and teasers/${teaser.slug}.md both have number ${teaser.number}`)
+    else slugOf.set(teaser.number, teaser.slug)
+  }
+  const missing: string[] = []
+  for (let n = 1; n <= teasers.length; n++) if (!slugOf.has(n)) missing.push(`#${n}`)
+  if (missing.length) problems.push(`the numbers must go 1, 2, 3, … without gaps, but ${missing.join(', ')} is missing`)
+
+  const byNumber = [...teasers].sort((a, b) => a.number - b.number)
+  for (let i = 1; i < byNumber.length; i++) {
+    const [earlier, later] = [byNumber[i - 1], byNumber[i]]
+    if (later.date < earlier.date) {
+      problems.push(`teasers/${later.slug}.md (#${later.number}) is dated before #${earlier.number}: numbers follow the dates`)
+    }
+  }
+  return problems
 }

@@ -52,12 +52,12 @@ export function ArchiveScreen(props: {
             <form className="finder__row" role="search" onSubmit={onSubmit}>
               <label className="search">
                 <Search className="search__icon" aria-hidden="true" />
-                <span className="visually-hidden">Search titles</span>
+                <span className="visually-hidden">Search by title or number</span>
                 <input
                   ref={searchRef}
                   className="search__input"
                   type="search"
-                  placeholder="Search titles"
+                  placeholder="Title or #"
                   value={view.query}
                   onChange={(event) => update({ query: event.target.value })}
                   enterKeyHint="search"
@@ -150,8 +150,8 @@ function NoMatches({ view, onShowAll }: { view: ArchiveView; onShowAll: () => vo
     nobody: 'teasers that nobody solved',
   }
   let message: string
-  if (view.solver === 'all') message = `No titles have “${query}” in them.`
-  else if (query) message = `No ${which[view.solver]} have “${query}” in the title.`
+  if (view.solver === 'all') message = `Nothing matches “${query}”.`
+  else if (query) message = `No ${which[view.solver]} match “${query}”.`
   else if (view.solver === 'nobody') message = 'At least one of you has solved every teaser so far.'
   else message = `No ${which[view.solver]} yet.`
 

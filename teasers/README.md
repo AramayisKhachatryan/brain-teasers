@@ -12,6 +12,7 @@ Most teasers come from the puzzle bank in [`puzzles/`](../puzzles/): a GitHub jo
 
 ```markdown
 ---
+number: 11            # its place in the series: #1 was the first teaser, the next one gets the next number
 date: 2026-10-29
 title: The two doors
 status: open          # open while we're solving, solved when we're done
@@ -34,6 +35,9 @@ Anything worth remembering: our approaches, wrong turns, a variant to try later.
 
 ## Rules (the build fails if one is broken)
 
+- `number` is a whole number. Across all files the numbers go 1, 2, 3, … with no gaps and no repeats, in date
+  order (two teasers on one day: the one given first has the lower number). The app shows it before the title:
+  "#11 Parking lot". A new teaser gets the next number; deleting one means renumbering the later ones.
 - `date` is a real date, written `YYYY-MM-DD`, and matches the date in the file name.
 - `title` is plain text. Wrap it in "double quotes" if it contains a colon or ` #`.
 - `status` is `open` or `solved`. `solved_by` lists only `aramayis` and `armen`, each at most once.
@@ -48,7 +52,7 @@ Anything worth remembering: our approaches, wrong turns, a variant to try later.
 ## Scoring
 
 Each person in `solved_by` of a solved teaser gets 1 point. Open teasers don't count.
-The current teaser (shown big on Home) is the newest open one.
+The current teaser (shown big on Home) is the newest open one (on the same day, the higher number).
 
 ## Writing
 

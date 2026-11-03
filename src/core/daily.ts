@@ -49,10 +49,11 @@ export function slugify(title: string): string {
 }
 
 /** The teaser file for a bank puzzle: open, with the question as the problem and nothing else. */
-export function teaserFile(puzzle: BankPuzzle, date: string): { fileName: string; content: string } {
+export function teaserFile(puzzle: BankPuzzle, date: string, number: number): { fileName: string; content: string } {
   const fileName = `${date}-${slugify(puzzle.title)}.md`
   const content = [
     '---',
+    `number: ${number}`,
     `date: ${date}`,
     `title: ${JSON.stringify(puzzle.title)}`,
     'status: open',
@@ -70,6 +71,16 @@ export type DailyPlan =
   | { action: 'skip'; reason: string }
   | { action: 'add'; puzzle: BankPuzzle; fileName: string; content: string; bank: BankPuzzle[] }
 
+/** The next teaser's number: one more than the highest `number:` in the existing teaser files. */
+export function nextNumber(teaserSources: readonly string[]): number {
+  let highest = 0
+  for (const source of teaserSources) {
+    const match = /^number:\s*(\d+)\s*$/m.exec(source)
+    if (match) highest = Math.max(highest, Number(match[1]))
+  }
+  return highest + 1
+}
+
 /** A day the daily job leaves alone, because Aramayis gives that day's teaser by hand (puzzles/days-off.json). */
 export interface DayOff {
   date: string
@@ -83,6 +94,8 @@ export interface DayOff {
 export function planDailyTeaser(input: {
   bank: readonly BankPuzzle[]
   teaserFiles: readonly string[]
+  /** The new teaser's number (see nextNumber). */
+  number: number
   date: string
   randomIndex: (count: number) => number
   extra?: boolean
@@ -98,7 +111,7 @@ export function planDailyTeaser(input: {
   if (available.length === 0) return { action: 'skip', reason: 'the puzzle bank has no unused puzzles left' }
 
   const puzzle = available[input.randomIndex(available.length)]
-  const { fileName, content } = teaserFile(puzzle, input.date)
+  const { fileName, content } = teaserFile(puzzle, input.date, input.number)
   if (input.teaserFiles.includes(fileName)) return { action: 'skip', reason: `teasers/${fileName} already exists` }
   const teaser = fileName.slice(0, -'.md'.length)
   const bank = input.bank.map((entry) => (entry.id === puzzle.id ? { ...entry, status: 'used' as const, teaser } : entry))

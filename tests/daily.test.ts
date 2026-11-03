@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
-import { dateIn, planDailyTeaser, slugify, teaserFile, type BankPuzzle } from '../src/core/daily'
+import { dateIn, nextNumber, planDailyTeaser, slugify, teaserFile, type BankPuzzle } from '../src/core/daily'
 import { FILE_NAME, parseTeaserFile } from '../src/core/parse'
 
 const puzzle = (number: number, status: BankPuzzle['status'], title = `Puzzle ${number}`): BankPuzzle => ({
@@ -36,13 +36,20 @@ describe('slugify', () => {
 
 describe('teaserFile', () => {
   it('makes a valid open teaser with only the problem', () => {
-    const { fileName, content } = teaserFile(puzzle(7, 'available', "Devil's penny & coins"), '2026-11-03')
+    const { fileName, content } = teaserFile(puzzle(7, 'available', "Devil's penny & coins"), '2026-11-03', 12)
     expect(fileName).toBe('2026-11-03-devils-penny-and-coins.md')
     expect(FILE_NAME.test(fileName)).toBe(true)
     const teaser = parseTeaserFile(fileName, content)
-    expect(teaser).toMatchObject({ title: "Devil's penny & coins", status: 'open', solvedBy: [], solution: null })
+    expect(teaser).toMatchObject({ number: 12, title: "Devil's penny & coins", status: 'open', solvedBy: [], solution: null })
     expect(teaser.problem).toContain('class="katex"')
     expect(teaser.problem).toContain('$5')
+  })
+})
+
+describe('nextNumber', () => {
+  it('is one more than the highest number in the teaser files', () => {
+    expect(nextNumber(['---\nnumber: 9\ndate: x\n---', '---\nnumber: 11\n---', '---\nnumber: 10\n---'])).toBe(12)
+    expect(nextNumber([])).toBe(1)
   })
 })
 
@@ -50,7 +57,7 @@ describe('planDailyTeaser', () => {
   const bank = [puzzle(1, 'used'), puzzle(2, 'available'), puzzle(3, 'skip'), puzzle(4, 'available')]
 
   it('adds a random unused puzzle and marks it used', () => {
-    const plan = planDailyTeaser({ bank, teaserFiles: ['2026-11-02-x.md'], date: '2026-11-03', randomIndex: () => 1 })
+    const plan = planDailyTeaser({ number: 12, bank, teaserFiles: ['2026-11-02-x.md'], date: '2026-11-03', randomIndex: () => 1 })
     expect(plan.action).toBe('add')
     if (plan.action !== 'add') return
     expect(plan.puzzle.id).toBe('brainstellar-4')
@@ -62,28 +69,28 @@ describe('planDailyTeaser', () => {
   it('only ever picks available puzzles', () => {
     const picked = new Set<string>()
     for (let i = 0; i < 2; i++) {
-      const plan = planDailyTeaser({ bank, teaserFiles: [], date: '2026-11-03', randomIndex: () => i })
+      const plan = planDailyTeaser({ number: 12, bank, teaserFiles: [], date: '2026-11-03', randomIndex: () => i })
       if (plan.action === 'add') picked.add(plan.puzzle.id)
     }
     expect([...picked].sort()).toEqual(['brainstellar-2', 'brainstellar-4'])
   })
 
   it('adds nothing when the day already has a teaser', () => {
-    const plan = planDailyTeaser({ bank, teaserFiles: ['2026-11-03-splitting-stones.md'], date: '2026-11-03', randomIndex: () => 0 })
+    const plan = planDailyTeaser({ number: 12, bank, teaserFiles: ['2026-11-03-splitting-stones.md'], date: '2026-11-03', randomIndex: () => 0 })
     expect(plan).toEqual({ action: 'skip', reason: 'there is already a teaser dated 2026-11-03' })
   })
 
   it('adds another teaser on the same day when asked for an extra one', () => {
-    const plan = planDailyTeaser({ bank, teaserFiles: ['2026-11-03-splitting-stones.md'], date: '2026-11-03', randomIndex: () => 0, extra: true })
+    const plan = planDailyTeaser({ number: 12, bank, teaserFiles: ['2026-11-03-splitting-stones.md'], date: '2026-11-03', randomIndex: () => 0, extra: true })
     expect(plan).toMatchObject({ action: 'add', fileName: '2026-11-03-puzzle-2.md' })
   })
 
   it('adds nothing on a day off, unless asked for an extra one', () => {
     const daysOff = [{ date: '2026-11-03', note: 'given by hand' }]
-    const plan = planDailyTeaser({ bank, teaserFiles: [], date: '2026-11-03', randomIndex: () => 0, daysOff })
+    const plan = planDailyTeaser({ number: 12, bank, teaserFiles: [], date: '2026-11-03', randomIndex: () => 0, daysOff })
     expect(plan).toEqual({ action: 'skip', reason: '2026-11-03 is a day off in puzzles/days-off.json (teaser given by hand)' })
-    expect(planDailyTeaser({ bank, teaserFiles: [], date: '2026-11-04', randomIndex: () => 0, daysOff }).action).toBe('add')
-    expect(planDailyTeaser({ bank, teaserFiles: [], date: '2026-11-03', randomIndex: () => 0, daysOff, extra: true }).action).toBe('add')
+    expect(planDailyTeaser({ number: 12, bank, teaserFiles: [], date: '2026-11-04', randomIndex: () => 0, daysOff }).action).toBe('add')
+    expect(planDailyTeaser({ number: 12, bank, teaserFiles: [], date: '2026-11-03', randomIndex: () => 0, daysOff, extra: true }).action).toBe('add')
   })
 
   it('reads a valid puzzles/days-off.json', () => {
@@ -93,7 +100,7 @@ describe('planDailyTeaser', () => {
   })
 
   it('adds nothing when the bank is used up', () => {
-    const plan = planDailyTeaser({ bank: [puzzle(1, 'used')], teaserFiles: [], date: '2026-11-03', randomIndex: () => 0 })
+    const plan = planDailyTeaser({ number: 12, bank: [puzzle(1, 'used')], teaserFiles: [], date: '2026-11-03', randomIndex: () => 0 })
     expect(plan).toEqual({ action: 'skip', reason: 'the puzzle bank has no unused puzzles left' })
   })
 })

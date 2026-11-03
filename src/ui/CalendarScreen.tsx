@@ -3,7 +3,7 @@ import { useState } from 'react'
 import { addMonths, monthRange, monthWeeks, teasersForDay, type CalendarDay } from '../core/calendar'
 import { fullDate, monthLabel } from '../core/dates'
 import { navigate } from '../core/router'
-import type { Teaser } from '../core/teaser'
+import { numberedTitle, type Teaser } from '../core/teaser'
 import { TeaserRow } from './bits'
 
 const WEEKDAYS = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su']
@@ -163,7 +163,7 @@ function Day({ day, chosen, onOpen }: { day: CalendarDay; chosen: boolean; onOpe
     return <span className={classes}>{inside}</span>
   }
 
-  const label = `${fullDate(day.date)}${day.isToday ? ', today' : ''}: ${found.map((teaser) => teaser.title).join(', ')}`
+  const label = `${fullDate(day.date)}${day.isToday ? ', today' : ''}: ${found.map(numberedTitle).join(', ')}`
   return (
     <button type="button" className={`${classes} tappable`} aria-label={label} onClick={onOpen}>
       {inside}
