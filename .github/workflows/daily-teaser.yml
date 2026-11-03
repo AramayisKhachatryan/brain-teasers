@@ -1,9 +1,12 @@
 name: Daily teaser
 
 # Every morning: add a random unused puzzle from puzzles/brainstellar.json as today's teaser, then deploy.
-# 03:35 UTC is 07:35 in Yerevan (UTC+4), so the teaser is live before 8:00 even if GitHub starts the run late.
+# 03:05 UTC is 07:05 in Yerevan (UTC+4), so the teaser is live before 8:00 even if GitHub starts the run late.
+# GitHub sometimes delays or drops scheduled runs (it skipped the first one, on 3 Nov), so 03:35 is a second try;
+# it adds nothing when today already has a teaser.
 on:
   schedule:
+    - cron: '5 3 * * *'
     - cron: '35 3 * * *'
   workflow_dispatch:
 

@@ -15,4 +15,4 @@ Every morning `.github/workflows/daily-teaser.yml` runs `node scripts/daily-teas
 build, pushes to `main` and starts the deploy. If a teaser dated today already exists, it adds nothing.
 
 **Days off:** a date in `days-off.json` (`{ "date": "YYYY-MM-DD", "note": "…" }`) gets no automatic teaser, for a
-morning when Aramayis gives the teaser by hand. Add it before 07:35 Yerevan time that day; old entries can stay.
+morning when Aramayis gives the teaser by hand. Add it before 07:05 Yerevan time that day; old entries can stay.
