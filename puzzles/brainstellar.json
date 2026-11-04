@@ -167,7 +167,8 @@
     "category": "general",
     "link": "https://brainstellar.com/puzzles/easy/17",
     "question": "There are two jars, one contains water, and the other contains wine (equal volumes). A certain amount of water is transferred to the wine, then the same amount of the mixture is transferred back to the water beaker. Is there now more water in the wine than there is wine in the water?\n\nAssume there is no expansion, compression, spillage or any chemical reaction.",
-    "status": "available"
+    "status": "used",
+    "teaser": "2026-11-05-water-and-wine"
   },
   {
     "id": "brainstellar-18",
