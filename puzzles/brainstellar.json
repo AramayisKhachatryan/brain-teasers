@@ -127,7 +127,8 @@
     "category": "probability",
     "link": "https://brainstellar.com/puzzles/easy/13",
     "question": "The probability of having accidents on a road in one hour is $3/4$. What is the probability of accidents in half an hour?",
-    "status": "available"
+    "status": "used",
+    "teaser": "2026-11-05-half-time"
   },
   {
     "id": "brainstellar-14",
