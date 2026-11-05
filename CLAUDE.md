@@ -39,6 +39,9 @@ then adds nothing that day. It can be run by hand from the Actions tab
 ("Daily teaser" → Run workflow). The bank (see `puzzles/README.md`) holds questions only, never hints or
 solutions; it had 64 available puzzles on 2 Nov 2026, so it runs out around early January 2027: tell Aramayis a
 few weeks before, and refill it with more questions. Scheduled workflows stop after 60 days without commits.
+**GitHub starts these scheduled runs late** (about 7.5 hours on 3–4 Nov 2026, so mid-afternoon in Yerevan). Until
+Aramayis picks a fix (earlier tries from midnight, or a Claude scheduled task at 07:00 that starts the workflow by
+hand), Claude checks at 07:50 Yerevan time and starts it by hand if needed, or adds the teaser just after midnight.
 
 ### Notifications
 
