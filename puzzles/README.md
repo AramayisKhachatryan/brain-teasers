@@ -7,9 +7,10 @@ links point to.
 
 **`brainstellar.json`** is what the morning job picks from. It keeps **only the questions** (the repo is public,
 and hints or solutions would sit next to the teaser we're solving), plus each puzzle's `source`, `difficulty`
-(from the ratings list) and a link to its page, which has the solution. So far it has the 71 easy and medium
-BrainStellar puzzles; Winkler and Jane Street puzzles join it (with `source: "winkler"` / `"janestreet"`) once
-their texts are here.
+(from the ratings list) and a link to its page, which has the solution. It has all 97 BrainStellar puzzles and all
+153 Jane Street monthly puzzles (`source: "janestreet"`, numbered YYYYMM; many are a grid or diagram shown as an
+image from janestreet.com, and the current month's puzzle is `skip` until its solution is published). Winkler's
+book puzzles are not in the public repo (see CLAUDE.md).
 
 Each puzzle has a `status`:
 
