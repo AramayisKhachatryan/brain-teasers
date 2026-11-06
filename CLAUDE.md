@@ -108,7 +108,8 @@ Node **22.22.0** (`.nvmrc`; the workflows read it). Dependencies are pinned to e
   `score.ts`, `select.ts` (current teaser = newest open; archive = everything else), `router.ts` (hash router:
   `#/`, `#/calendar`, `#/archive`, `#/stats`, `#/t/<file-name>`; each in-app navigation stores the screen it came from in
   `history.state`, which drives the teaser page's Back label and the active tab), `dates.ts`, `archive.ts`
-  (Archive search by title or number ("11", "#11"), newest/oldest order, solver filter chips Aramayis/Armen/Both/Nobody where a
+  (Archive search by title or number ("11", "#11"), order newest/oldest (grouped by month) or hardest/easiest
+  (grouped by difficulty) from a native picker, each row showing its difficulty, solver filter chips Aramayis/Armen/Both/Nobody where a
   name includes joint solves and Nobody means finished but unsolved; no chip selected shows everything, tapping
   the selected chip again clears it, and "Show all" clears search and filter), `calendar.ts` (month grid, Monday first; a teaser marks the day it was given, and its
   days until `solved_on`, or until today while open, form a "still solving" stretch), `stats.ts` (the Stats

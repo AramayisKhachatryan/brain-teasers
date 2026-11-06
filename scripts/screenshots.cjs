@@ -22,7 +22,8 @@ const SHOTS = [
   { name: 'stats', build: 'real', hash: '#/stats', fullPage: true },
   { name: 'archive-search', build: 'real', hash: '#/archive', search: 'king' },
   { name: 'archive-search-number', build: 'real', hash: '#/archive', search: '#9' },
-  { name: 'archive-both-oldest', build: 'real', hash: '#/archive', taps: [['button', 'Both'], ['button', 'Sorted Newest first']] },
+  { name: 'archive-both-oldest', build: 'real', hash: '#/archive', taps: [['button', 'Both']], sort: 'oldest' },
+  { name: 'archive-hardest', build: 'real', hash: '#/archive', sort: 'hardest' },
   { name: 'archive-nobody', build: 'real', hash: '#/archive', taps: [['button', 'Nobody']] },
   { name: 'archive-no-match', build: 'real', hash: '#/archive', search: 'pirates', taps: [['button', 'Armen']] },
   { name: 'teaser-real', build: 'real', hash: '#/t/2026-10-23-circle-chords' },
@@ -74,6 +75,7 @@ async function main() {
         for (const [role, name] of shot.taps ?? []) {
           await page.getByRole(role, typeof name === 'string' ? { name, exact: true } : { name }).tap()
         }
+        if (shot.sort) await page.getByRole('combobox', { name: 'Sort' }).selectOption(shot.sort)
         if (shot.search) {
           await page.getByRole('searchbox', { name: 'Search by title or number' }).fill(shot.search)
           await page.keyboard.press('Enter') // the Search key closes the keyboard

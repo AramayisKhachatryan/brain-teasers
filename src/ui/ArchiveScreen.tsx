@@ -1,6 +1,6 @@
-import { CalendarArrowDown, CalendarArrowUp, Search, X } from 'lucide-react'
+import { ArrowDownWideNarrow, ArrowUpNarrowWide, CalendarArrowDown, CalendarArrowUp, Search, X, type LucideIcon } from 'lucide-react'
 import { useRef, type FormEvent } from 'react'
-import { DEFAULT_VIEW, isFiltered, viewArchive, type ArchiveView, type SolverFilter } from '../core/archive'
+import { DEFAULT_VIEW, isFiltered, viewArchive, type ArchiveView, type SolverFilter, type SortOrder } from '../core/archive'
 import { monthLabel } from '../core/dates'
 import { DISPLAY_NAME, type Teaser } from '../core/teaser'
 import { TeaserRow } from './bits'
@@ -13,6 +13,13 @@ const SOLVER_CHOICES: { value: Exclude<SolverFilter, 'all'>; label: string }[] =
   { value: 'nobody', label: 'Nobody' },
 ]
 
+const SORTS: { value: SortOrder; label: string; Icon: LucideIcon }[] = [
+  { value: 'newest', label: 'Newest first', Icon: CalendarArrowDown },
+  { value: 'oldest', label: 'Oldest first', Icon: CalendarArrowUp },
+  { value: 'hardest', label: 'Hardest first', Icon: ArrowDownWideNarrow },
+  { value: 'easiest', label: 'Easiest first', Icon: ArrowUpNarrowWide },
+]
+
 export function ArchiveScreen(props: {
   teasers: Teaser[]
   view: ArchiveView
@@ -22,7 +29,7 @@ export function ArchiveScreen(props: {
   const searchRef = useRef<HTMLInputElement>(null)
   const shown = viewArchive(props.teasers, view)
   const update = (changes: Partial<ArchiveView>) => onViewChange({ ...view, ...changes })
-  // Clears the search and the filter, keeping the date order.
+  // Clears the search and the filter, keeping the order.
   const showAll = () => onViewChange({ ...DEFAULT_VIEW, order: view.order })
 
   // The keyboard's Search key just closes the keyboard: results already update while typing.
@@ -31,12 +38,15 @@ export function ArchiveScreen(props: {
     searchRef.current?.blur()
   }
 
-  const months: { label: string; teasers: Teaser[] }[] = []
+  // Grouped by month when sorted by date, by difficulty when sorted by difficulty.
+  const byDifficulty = view.order === 'hardest' || view.order === 'easiest'
+  const groups: { label: string; teasers: Teaser[] }[] = []
   for (const teaser of shown) {
-    const label = monthLabel(teaser.date)
-    if (months.at(-1)?.label !== label) months.push({ label, teasers: [] })
-    months.at(-1)!.teasers.push(teaser)
+    const label = byDifficulty ? `Difficulty ${teaser.difficulty}` : monthLabel(teaser.date)
+    if (groups.at(-1)?.label !== label) groups.push({ label, teasers: [] })
+    groups.at(-1)!.teasers.push(teaser)
   }
+  const sort = SORTS.find((option) => option.value === view.order) ?? SORTS[0]
 
   return (
     <main className="screen screen--archive">
@@ -80,19 +90,30 @@ export function ArchiveScreen(props: {
                   </button>
                 )}
               </label>
-              <button
-                type="button"
-                className="sort tappable"
-                onClick={() => update({ order: view.order === 'newest' ? 'oldest' : 'newest' })}
-              >
-                {view.order === 'newest' ? <CalendarArrowDown aria-hidden="true" /> : <CalendarArrowUp aria-hidden="true" />}
-                <span className="visually-hidden">Sorted </span>
-                {/* Both labels take up space, so the button keeps one width and the search field doesn't move. */}
-                <span className="sort__labels">
-                  <span className={view.order === 'newest' ? undefined : 'is-hidden'}>Newest first</span>
-                  <span className={view.order === 'oldest' ? undefined : 'is-hidden'}>Oldest first</span>
+              {/* A native picker under the button's look: on the iPhone it opens the system wheel. */}
+              <label className="sort tappable">
+                <sort.Icon aria-hidden="true" />
+                {/* All labels take up space, so the button keeps one width and the search field doesn't move. */}
+                <span className="sort__labels" aria-hidden="true">
+                  {SORTS.map((option) => (
+                    <span key={option.value} className={option.value === view.order ? undefined : 'is-hidden'}>
+                      {option.label}
+                    </span>
+                  ))}
                 </span>
-              </button>
+                <select
+                  className="sort__select"
+                  aria-label="Sort"
+                  value={view.order}
+                  onChange={(event) => update({ order: event.target.value as SortOrder })}
+                >
+                  {SORTS.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+              </label>
             </form>
 
             <div className="chips" role="group" aria-label="Solved by">
@@ -125,11 +146,11 @@ export function ArchiveScreen(props: {
         </>
       )}
 
-      {months.map((month) => (
-        <section key={month.label} className="archive__month">
-          <h2 className="archive__month-label">{month.label}</h2>
+      {groups.map((group) => (
+        <section key={group.label} className="archive__month">
+          <h2 className="archive__month-label">{group.label}</h2>
           <ul className="archive__list">
-            {month.teasers.map((teaser) => (
+            {group.teasers.map((teaser) => (
               <li key={teaser.slug}>
                 <TeaserRow teaser={teaser} />
               </li>
