@@ -51,6 +51,7 @@ const BACK_LABEL: Record<Exclude<Route['name'], 'teaser'>, string> = {
   home: 'Current',
   calendar: 'Calendar',
   archive: 'Archive',
+  stats: 'Stats',
 }
 
 export function TeaserScreen({ teaser }: { teaser: Teaser | undefined }) {

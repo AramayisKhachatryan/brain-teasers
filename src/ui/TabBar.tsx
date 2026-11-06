@@ -1,13 +1,14 @@
-import { CalendarDays, Library, PencilLine, type LucideIcon } from 'lucide-react'
+import { CalendarDays, ChartLine, Library, PencilLine, type LucideIcon } from 'lucide-react'
 import type { MouseEvent } from 'react'
 import { cameFrom, hrefFor, navigate, routeKey, type Route } from '../core/router'
 
-type Section = 'home' | 'calendar' | 'archive'
+type Section = 'home' | 'calendar' | 'archive' | 'stats'
 
 const TABS: { to: Route; section: Section; label: string; Icon: LucideIcon }[] = [
   { to: { name: 'home' }, section: 'home', label: 'Current', Icon: PencilLine },
   { to: { name: 'calendar' }, section: 'calendar', label: 'Calendar', Icon: CalendarDays },
   { to: { name: 'archive' }, section: 'archive', label: 'Archive', Icon: Library },
+  { to: { name: 'stats' }, section: 'stats', label: 'Stats', Icon: ChartLine },
 ]
 
 /** The tab a screen belongs to. A teaser page belongs to the tab it was opened from (Archive after a direct link). */

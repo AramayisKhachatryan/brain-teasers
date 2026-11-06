@@ -1,13 +1,19 @@
-// A small hash router (#/, #/calendar, #/archive, #/t/<slug>) so the app works under the GitHub Pages sub-path.
+// A small hash router (#/, #/calendar, #/archive, #/stats, #/t/<slug>) so the app works under the GitHub Pages sub-path.
 // In-app navigation uses pushState; Back/forward arrive as popstate.
 
-export type Route = { name: 'home' } | { name: 'calendar' } | { name: 'archive' } | { name: 'teaser'; slug: string }
+export type Route =
+  | { name: 'home' }
+  | { name: 'calendar' }
+  | { name: 'archive' }
+  | { name: 'stats' }
+  | { name: 'teaser'; slug: string }
 
 export function parseHash(hash: string): Route {
   const path = hash.replace(/^#/, '').replace(/\/+$/, '')
   if (path === '' || path === '/') return { name: 'home' }
   if (path === '/calendar') return { name: 'calendar' }
   if (path === '/archive') return { name: 'archive' }
+  if (path === '/stats') return { name: 'stats' }
   const teaser = /^\/t\/([a-z0-9-]+)$/.exec(path)
   if (teaser) return { name: 'teaser', slug: teaser[1] }
   return { name: 'home' }
@@ -21,6 +27,8 @@ export function hrefFor(route: Route): string {
       return '#/calendar'
     case 'archive':
       return '#/archive'
+    case 'stats':
+      return '#/stats'
     case 'teaser':
       return `#/t/${route.slug}`
   }

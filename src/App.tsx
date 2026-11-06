@@ -3,10 +3,12 @@ import { DEFAULT_VIEW, type ArchiveView } from './core/archive'
 import { monthOf, todayIso } from './core/calendar'
 import { currentRoute, lastNavigation, onBeforeChange, routeKey, subscribe } from './core/router'
 import { computeScore } from './core/score'
+import { computeStats } from './core/stats'
 import { archiveTeasers, currentTeaser, lastSolved } from './core/select'
 import { teasers } from './teasers'
 import { ArchiveScreen } from './ui/ArchiveScreen'
 import { CalendarScreen } from './ui/CalendarScreen'
+import { StatsScreen } from './ui/StatsScreen'
 import { HomeScreen, TeaserScreen } from './ui/screens'
 import { TabBar } from './ui/TabBar'
 
@@ -14,6 +16,7 @@ const score = computeScore(teasers)
 const current = currentTeaser(teasers)
 const archive = archiveTeasers(teasers)
 const last = lastSolved(teasers)
+const stats = computeStats(teasers)
 
 // Back/forward returns to where you were; a tap on something new starts at the top.
 const scrollPositions = new Map<string, number>()
@@ -41,6 +44,9 @@ export function App() {
       break
     case 'archive':
       screen = <ArchiveScreen teasers={archive} view={archiveView} onViewChange={setArchiveView} />
+      break
+    case 'stats':
+      screen = <StatsScreen stats={stats} />
       break
     case 'teaser':
       screen = <TeaserScreen teaser={teasers.find((teaser) => teaser.slug === route.slug)} />
