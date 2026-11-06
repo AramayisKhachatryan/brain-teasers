@@ -2,6 +2,7 @@
 number: 2
 date: 2026-10-23
 title: Chords on a circle
+difficulty: 5
 status: solved
 solved_by: [aramayis, armen]
 solved_on: 2026-10-24

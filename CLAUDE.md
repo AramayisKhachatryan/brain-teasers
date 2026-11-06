@@ -21,19 +21,26 @@ and Claude is the one who edits those files.
 
 The file format and validation rules are in [`teasers/README.md`](teasers/README.md). Summary:
 `teasers/YYYY-MM-DD-short-name.md` (the date it was given), front matter `number` (#1, #2, … in date order, no
-gaps; shown before the title as "#11 Parking lot"; a new teaser gets the next one), `date`, `title`, `status`
+gaps; shown before the title as "#11 Parking lot"; a new teaser gets the next one), `date`, `title`, `difficulty`
+(1–10: each solver gets that many points, and it sets the days to solve), `status`
 (`open`|`solved`), `solved_by` (`[]`, `[aramayis]`, `[armen]`, `[aramayis, armen]`), optional `solved_on`
 (the day they finished; solving often takes more than a day), then `## Problem`, `## Hints`, `## Solution`,
 `## Notes`. Teasers #1 to #7 (22–29 Oct 2026) were imported from the list and notes Aramayis sent.
 
-### Daily teaser (automatic, first run 4 Nov 2026)
+### Morning teaser (automatic since 4 Nov 2026; by difficulty since 6 Nov 2026)
 
-A new teaser appears every morning before 8:00 Armenian time, posted daily whether or not the previous one is
-solved. `.github/workflows/daily-teaser.yml` runs at 03:05 UTC (second try at 03:35, since GitHub sometimes drops scheduled runs): `node scripts/daily-teaser.ts` picks a random
+Since 6 Nov 2026 the source list is `puzzles/difficulty-ratings.md` (563 problems from BrainStellar, Winkler and
+Jane Street, rated 1–10). Each teaser gets **days to solve by difficulty** (1 day for 1–3 up to 7 days for 9–10; table
+in `puzzles/README.md`); when they're up, or the teaser is solved, a new one appears in the morning before 8:00
+Armenian time. Difficulties are mixed, with at least one Jane Street puzzle a month. If they solve it fast, they ask
+for a new one ("give us a new teaser"). **Only the 71 BrainStellar texts are here so far**: the Winkler and Jane Street
+texts (`winkler_puzzles.md`, `jane_street_puzzles.md`, and the full `brainstellar_puzzles.md`) still have to be
+uploaded; add their questions to the bank with `source` and `difficulty`. Teasers #1–#13 got difficulties from the
+list where it has them, otherwise estimated on its scale. `.github/workflows/daily-teaser.yml` runs at 03:05 UTC (second try at 03:35, since GitHub sometimes drops scheduled runs): `node scripts/daily-teaser.ts` picks a random
 `available` puzzle from `puzzles/brainstellar.json` (logic in `src/core/daily.ts`), writes it as today's open teaser
-with the next number,
+with the next number and its difficulty,
 marks it `used`, runs tests and build, pushes to `main` as github-actions[bot] (no PR) and starts the Deploy
-workflow. If a teaser dated today already exists, it adds nothing. **"Don't add the automatic teaser tomorrow,
+workflow. It adds nothing if a teaser dated today exists or the newest teaser is still inside its days to solve. **"Don't add the automatic teaser tomorrow,
 I'll give it myself"**: add that date to `puzzles/days-off.json` (before 07:05 Yerevan time), commit, merge; the job
 then adds nothing that day. It can be run by hand from the Actions tab
 ("Daily teaser" → Run workflow). The bank (see `puzzles/README.md`) holds questions only, never hints or
@@ -70,7 +77,8 @@ What Aramayis says, and what to do:
 
 - **"Add a new teaser: …"** / **"give us a new teaser"**: create the file with the next `number`, the date Aramayis
   gives (or today's), `status: open`, `solved_by: []` and only `## Problem`. Then commit, merge and deploy. If asked to pick,
-  run `node scripts/daily-teaser.ts --extra` (a random `available` puzzle for today, marked `used`), or choose a
+  run `node scripts/daily-teaser.ts --extra` (a puzzle for today by the mixing rules, marked `used`; `--exclude <id>`
+  to skip one), or choose a
   quant-interview style or simply interesting puzzle that isn't a famous classic, and check the archive for repeats. **If the puzzle is in the bank,
   mark it `used`** (with `teaser`) so the daily job never posts it again; if it's too close to a bank puzzle, mark
   that one `skip` with a `note`. A teaser dated today means the daily job adds nothing that day.

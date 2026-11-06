@@ -2,6 +2,7 @@
 number: 10
 date: 2026-11-02
 title: "Pattern on snowflakes"
+difficulty: 4
 status: solved
 solved_by: [aramayis, armen]
 solved_on: 2026-11-02

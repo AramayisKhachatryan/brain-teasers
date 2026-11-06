@@ -2,6 +2,7 @@
 number: 9
 date: 2026-11-02
 title: Splitting stones
+difficulty: 3
 status: solved
 solved_by: [aramayis, armen]
 solved_on: 2026-11-02

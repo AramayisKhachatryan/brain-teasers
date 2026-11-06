@@ -2,6 +2,7 @@
 number: 2
 date: 2026-10-27
 title: Two random points
+difficulty: 6
 status: solved
 solved_by: [aramayis, armen]
 solved_on: 2026-10-28

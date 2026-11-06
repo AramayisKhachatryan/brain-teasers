@@ -18,6 +18,15 @@ describe('computeScore', () => {
     expect(computeScore(teasers)).toEqual({ aramayis: 2, armen: 2 })
   })
 
+  it('gives each solver as many points as the difficulty', () => {
+    const teasers = [
+      makeTeaser({ slug: '2026-10-01-a', difficulty: 7, solvedBy: ['aramayis'] }),
+      makeTeaser({ slug: '2026-10-02-b', difficulty: 3, solvedBy: ['aramayis', 'armen'] }),
+      makeTeaser({ slug: '2026-10-03-c', difficulty: 9, solvedBy: [] }),
+    ]
+    expect(computeScore(teasers)).toEqual({ aramayis: 10, armen: 3 })
+  })
+
   it('ignores open teasers', () => {
     const teasers = [makeTeaser({ slug: '2026-10-01-a', status: 'open', solvedBy: ['armen'] })]
     expect(computeScore(teasers)).toEqual({ aramayis: 0, armen: 0 })

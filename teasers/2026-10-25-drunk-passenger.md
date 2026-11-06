@@ -2,6 +2,7 @@
 number: 3
 date: 2026-10-25
 title: Drunk airline passenger
+difficulty: 5
 status: solved
 solved_by: [armen]
 solved_on: 2026-10-25

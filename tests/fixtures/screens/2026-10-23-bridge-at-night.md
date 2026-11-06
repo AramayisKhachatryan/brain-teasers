@@ -2,6 +2,7 @@
 number: 4
 date: 2026-10-23
 title: Bridge at night
+difficulty: 4
 status: solved
 solved_by: []
 solved_on: 2026-10-25

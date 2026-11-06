@@ -2,6 +2,7 @@
 number: 12
 date: 2026-11-05
 title: "Water & wine"
+difficulty: 2
 status: solved
 solved_by: [aramayis, armen]
 solved_on: 2026-11-05

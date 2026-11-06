@@ -253,8 +253,14 @@ p {
   font-variant-numeric: lining-nums tabular-nums;
 }
 
-.solved-line {
+.teaser__meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
   margin: -6px 0 24px;
+}
+
+.meta-line {
   font-weight: 500;
   font-size: 15px;
   color: var(--muted);

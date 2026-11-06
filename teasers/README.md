@@ -15,6 +15,7 @@ Most teasers come from the puzzle bank in [`puzzles/`](../puzzles/): a GitHub jo
 number: 11            # its place in the series: #1 was the first teaser, the next one gets the next number
 date: 2026-10-29
 title: The two doors
+difficulty: 4         # 1–10, from puzzles/difficulty-ratings.md (or estimated on its scale); also the points
 status: open          # open while we're solving, solved when we're done
 solved_by: []         # who solved it: [aramayis], [armen], [aramayis, armen] or []
 solved_on: 2026-10-30 # optional, solved teasers only: the day we finished
@@ -38,6 +39,9 @@ Anything worth remembering: our approaches, wrong turns, a variant to try later.
 - `number` is a whole number. Across all files the numbers go 1, 2, 3, … with no gaps and no repeats, in date
   order (two teasers on one day: the one given first has the lower number). The app shows it before the title:
   "#11 Parking lot". A new teaser gets the next number; deleting one means renumbering the later ones.
+- `difficulty` is a whole number from 1 to 10: the rating in `puzzles/difficulty-ratings.md`, or an estimate on the
+  same scale for a puzzle that isn't there. It sets the points and how many days the teaser gets (see
+  `puzzles/README.md`).
 - `date` is a real date, written `YYYY-MM-DD`, and matches the date in the file name.
 - `title` is plain text. Wrap it in "double quotes" if it contains a colon or ` #`.
 - `status` is `open` or `solved`. `solved_by` lists only `aramayis` and `armen`, each at most once.
@@ -51,7 +55,7 @@ Anything worth remembering: our approaches, wrong turns, a variant to try later.
 
 ## Scoring
 
-Each person in `solved_by` of a solved teaser gets 1 point. Open teasers don't count.
+Each person in `solved_by` of a solved teaser gets as many points as its `difficulty`. Open teasers don't count.
 The current teaser (shown big on Home) is the newest open one (on the same day, the higher number).
 
 ## Writing

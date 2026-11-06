@@ -16,6 +16,8 @@ export interface Teaser {
   slug: string
   /** Its place in the series: #1 is the first teaser we ever did. Shown before the title. */
   number: number
+  /** 1–10, from puzzles/difficulty-ratings.md or estimated on the same scale. Each solver gets this many points. */
+  difficulty: number
   /** `YYYY-MM-DD` */
   date: string
   title: string

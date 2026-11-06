@@ -54,6 +54,7 @@ describe('parseTeaserFile: valid files', () => {
 number: 3             # its place in the series
 date: 2026-10-29
 title: The two doors
+difficulty: 4         # 1–10
 status: open          # open while we're solving, solved when we're done
 solved_by: []         # who solved it
 ---
@@ -161,7 +162,9 @@ describe('parseTeaserFile: malformed files fail with a clear message', () => {
     ['unclosed front matter', NAME, '---\ndate: 2026-10-29\n', /not closed/],
     ['invalid YAML', NAME, teaserFile({ title: '[oops' }), /not valid YAML/],
     ['unknown key', NAME, teaserFile({ extraFrontMatter: 'solvedby: []\n' }), /unknown front matter key "solvedby"/],
-    ['missing key', NAME, '---\nnumber: 1\ndate: 2026-10-29\ntitle: T\nstatus: open\n---\n## Problem\nX\n', /missing "solved_by"/],
+    ['missing key', NAME, '---\nnumber: 1\ndate: 2026-10-29\ntitle: T\ndifficulty: 3\nstatus: open\n---\n## Problem\nX\n', /missing "solved_by"/],
+    ['difficulty 0', NAME, teaserFile({ difficulty: 0 }), /difficulty must be a whole number from 1 to 10/],
+    ['difficulty 11', NAME, teaserFile({ difficulty: 11 }), /difficulty must be a whole number from 1 to 10/],
     ['missing number', NAME, '---\ndate: 2026-10-29\ntitle: T\nstatus: open\nsolved_by: []\n---\n## Problem\nX\n', /missing "number"/],
     ['number zero', NAME, teaserFile({ number: 0 }), /number must be a whole number/],
     ['number not whole', NAME, teaserFile({ number: '2.5' }), /number must be a whole number/],

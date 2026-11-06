@@ -1,13 +1,15 @@
-// Adds today's teaser (Armenian date) from the puzzle bank and marks the puzzle as used.
+// Adds today's teaser (Armenian date) from the puzzle bank and marks the puzzle as used, once the newest teaser's
+// days to solve (by difficulty, see daysToSolve in src/core/daily.ts) are over.
 // Run every morning by .github/workflows/daily-teaser.yml; Node runs this TypeScript file directly.
 //
 //   node scripts/daily-teaser.ts              add today's teaser, unless today already has one
 //   node scripts/daily-teaser.ts --dry-run    only say what it would do
 //   node scripts/daily-teaser.ts --date 2026-11-03
-//   node scripts/daily-teaser.ts --extra      add one even if today already has a teaser ("another teaser")
+//   node scripts/daily-teaser.ts --extra      add one now, even if today already has a teaser ("a new teaser")
+//   node scripts/daily-teaser.ts --exclude brainstellar-1005   never pick these puzzle ids this time
 import { randomInt } from 'node:crypto'
 import { appendFileSync, existsSync, readdirSync, readFileSync, writeFileSync } from 'node:fs'
-import { TEASER_TIME_ZONE, dateIn, nextNumber, planDailyTeaser, type BankPuzzle, type DayOff } from '../src/core/daily.ts'
+import { TEASER_TIME_ZONE, dateIn, nextNumber, planDailyTeaser, summarize, type BankPuzzle, type DayOff, type TeaserSummary } from '../src/core/daily.ts'
 
 const BANK = new URL('../puzzles/brainstellar.json', import.meta.url)
 const TEASERS = new URL('../teasers/', import.meta.url)
@@ -23,10 +25,15 @@ if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) throw new Error(`--date must be YYYY-MM-D
 const bank: BankPuzzle[] = JSON.parse(readFileSync(BANK, 'utf8'))
 const daysOff: DayOff[] = existsSync(DAYS_OFF) ? JSON.parse(readFileSync(DAYS_OFF, 'utf8')) : []
 const teaserFiles = readdirSync(TEASERS).filter((name) => /^\d{4}-\d{2}-\d{2}-.*\.md$/.test(name))
-const number = nextNumber(teaserFiles.map((name) => readFileSync(new URL(name, TEASERS), 'utf8')))
+const sources = teaserFiles.map((name) => readFileSync(new URL(name, TEASERS), 'utf8'))
+const number = nextNumber(sources)
+const recent = sources.map(summarize).filter((summary): summary is TeaserSummary => summary !== null)
+const exclude = args.includes('--exclude') ? args[args.indexOf('--exclude') + 1].split(',') : []
 const plan = planDailyTeaser({
   bank,
   teaserFiles,
+  recent,
+  exclude,
   number,
   date,
   randomIndex: (count) => randomInt(count),
@@ -44,7 +51,7 @@ if (plan.action === 'skip') {
   output('added', 'false')
 } else {
   const left = plan.bank.filter((puzzle) => puzzle.status === 'available').length
-  console.log(`${dryRun ? 'Would add' : 'Added'} teasers/${plan.fileName}: #${number} "${plan.puzzle.title}" (${plan.puzzle.id}). ${left} unused puzzles left.`)
+  console.log(`${dryRun ? 'Would add' : 'Added'} teasers/${plan.fileName}: #${number} "${plan.puzzle.title}" (${plan.puzzle.id}, difficulty ${plan.puzzle.difficulty}). ${left} unused puzzles left.`)
   if (!dryRun) {
     writeFileSync(new URL(plan.fileName, TEASERS), plan.content)
     writeFileSync(BANK, `${JSON.stringify(plan.bank, null, 2)}\n`)

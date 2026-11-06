@@ -2,6 +2,7 @@
 number: 1
 date: 2026-09-29
 title: Shared birthdays
+difficulty: 3
 status: solved
 solved_by: [aramayis]
 ---

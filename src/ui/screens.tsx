@@ -3,7 +3,7 @@ import { fullDate, longDate } from '../core/dates'
 import { cameFrom, goBack, type Route } from '../core/router'
 import type { Score } from '../core/score'
 import type { Teaser } from '../core/teaser'
-import { Link, Prose, SolvedLine, SolverMarks, TeaserTitle } from './bits'
+import { DifficultyLine, Link, Prose, SolvedLine, SolverMarks, TeaserTitle } from './bits'
 import { Fold } from './Fold'
 import { NotifyCard } from './NotifyCard'
 import { ScoreBoard } from './ScoreBoard'
@@ -19,6 +19,9 @@ export function HomeScreen(props: { current: Teaser | null; lastSolved: Teaser |
           <h1 className="teaser__title">
             <TeaserTitle teaser={current} />
           </h1>
+          <div className="teaser__meta">
+            <DifficultyLine teaser={current} />
+          </div>
           <Prose html={current.problem} className="problem" />
           <p className="nudge">Stuck? Ask Claude for a hint.</p>
         </article>
@@ -82,7 +85,10 @@ export function TeaserScreen({ teaser }: { teaser: Teaser | undefined }) {
         <h1 className="teaser__title">
           <TeaserTitle teaser={teaser} />
         </h1>
-        <SolvedLine teaser={teaser} />
+        <div className="teaser__meta">
+          <DifficultyLine teaser={teaser} />
+          <SolvedLine teaser={teaser} />
+        </div>
         <Prose html={teaser.problem} className="problem" />
       </article>
       {(teaser.hints || teaser.solution || teaser.notes) && (
