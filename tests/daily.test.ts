@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
-import { addDays, bandOf, dateIn, daysToSolve, nextNumber, planDailyTeaser, slugify, summarize, teaserFile, type BankPuzzle, type TeaserSummary } from '../src/core/daily'
+import { winklerBank, addDays, bandOf, dateIn, daysToSolve, nextNumber, planDailyTeaser, slugify, summarize, teaserFile, type BankPuzzle, type TeaserSummary } from '../src/core/daily'
 import { FILE_NAME, parseTeaserFile } from '../src/core/parse'
 
 const puzzle = (
@@ -169,6 +169,11 @@ describe('planDailyTeaser with days to solve and mixing', () => {
       planDailyTeaser({ number: 20, bank: list, teaserFiles: [], recent: [], date, randomIndex: () => 0 })
     const early = run('2026-11-09')
     expect(early.action === 'add' && early.puzzle.source).toBe('brainstellar')
+    // outside the monthly slot, Jane Street never comes up, even when it's all that's left in a band
+    const onlyHardIsJs = [puzzle(1, 'available', 'Easy', 2), puzzle(9, 'available', 'Grid', 8, 'janestreet')]
+    const hardTurn = [t(17, '2026-11-01', 2, 'solved'), t(18, '2026-11-02', 4, 'solved'), t(19, '2026-11-03', 5, 'solved')]
+    const pick = planDailyTeaser({ number: 20, bank: onlyHardIsJs, teaserFiles: [], recent: hardTurn, date: '2026-11-05', randomIndex: () => 0 })
+    expect(pick.action === 'add' && pick.puzzle.source).toBe('brainstellar')
     const due = run('2026-11-10')
     expect(due.action === 'add' && due.puzzle.source).toBe('janestreet')
     const doneThisMonth = [...withJs, { ...puzzle(2, 'used', 'Old grid', 8, 'janestreet'), teaser: '2026-11-03-old-grid' }]
@@ -179,5 +184,34 @@ describe('planDailyTeaser with days to solve and mixing', () => {
   it('never picks an excluded puzzle', () => {
     const result = planDailyTeaser({ number: 20, bank, teaserFiles: [], recent: [], date: '2026-11-05', randomIndex: () => 0, exclude: ['brainstellar-1', 'brainstellar-2'] })
     expect(result.action === 'add' && result.puzzle.id).toBe('brainstellar-3')
+  })
+})
+
+describe('winklerBank', () => {
+  it('marks used puzzles and the ones that need a figure', () => {
+    const base = { source: 'winkler' as const, category: 'winkler', question: 'Q?' }
+    const result = winklerBank(
+      [
+        { ...base, id: 'winkler-1', number: 1, title: 'A', difficulty: 2 },
+        { ...base, id: 'winkler-2', number: 2, title: 'B', difficulty: 5, needs_figure: true },
+        { ...base, id: 'winkler-3', number: 3, title: 'C', difficulty: 7 },
+      ],
+      [{ id: 'winkler-3', teaser: '2026-11-08-c' }],
+    )
+    expect(result.map((p) => [p.id, p.status, p.teaser ?? p.note ?? null])).toEqual([
+      ['winkler-1', 'available', null],
+      ['winkler-2', 'skip', 'Needs a figure from the book'],
+      ['winkler-3', 'used', '2026-11-08-c'],
+    ])
+    expect('needs_figure' in result[1]).toBe(false)
+  })
+
+  it('has a valid puzzles/winkler-used.json', () => {
+    const used = JSON.parse(readFileSync(new URL('../puzzles/winkler-used.json', import.meta.url), 'utf8'))
+    expect(Array.isArray(used)).toBe(true)
+    for (const entry of used) {
+      expect(entry.id).toMatch(/^winkler-\d+$/)
+      expect(readFileSync(new URL(`../teasers/${entry.teaser}.md`, import.meta.url), 'utf8')).toContain('## Problem')
+    }
   })
 })

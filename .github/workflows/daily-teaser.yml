@@ -21,6 +21,8 @@ concurrency:
 jobs:
   add:
     runs-on: ubuntu-latest
+    env:
+      WINKLER_TOKEN: ${{ secrets.WINKLER_TOKEN }}
     steps:
       - uses: actions/checkout@v5
         with:
@@ -29,6 +31,16 @@ jobs:
         with:
           node-version-file: .nvmrc
           cache: npm
+      # Winkler's puzzles live in a private repository (they're from his book); a read-only token opens it.
+      # Without the token, or if it fails, the job carries on with BrainStellar and Jane Street.
+      - name: Check out the private Winkler puzzles
+        if: env.WINKLER_TOKEN != ''
+        continue-on-error: true
+        uses: actions/checkout@v5
+        with:
+          repository: AramayisKhachatryan/brain-teasers-winkler
+          token: ${{ env.WINKLER_TOKEN }}
+          path: winkler-bank
       - run: npm ci
       - id: pick
         run: node scripts/daily-teaser.ts

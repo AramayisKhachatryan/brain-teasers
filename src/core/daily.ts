@@ -12,7 +12,8 @@ export interface BankPuzzle {
   difficulty: number
   category: string
   /** The puzzle's page. It shows the solution, so it only goes into a teaser once the teaser is solved. */
-  link: string
+  /** The puzzle's web page (BrainStellar, Jane Street); Winkler's puzzles are from a book and have none. */
+  link?: string
   /** Question only: the bank holds no hints, answers or solutions (the repo is public). */
   question: string
   /** available: can be posted. used: already a teaser. skip: never post (a repeat, or already spoiled). */
@@ -113,6 +114,28 @@ export function summarize(source: string): TeaserSummary | null {
   return { number, date, difficulty, status }
 }
 
+/** One Winkler puzzle used as a teaser (puzzles/winkler-used.json). The texts live in a private repository. */
+export interface WinklerUse {
+  id: string
+  teaser: string
+}
+
+/**
+ * Winkler puzzles from the private file, as bank entries: `used` if listed in winkler-used.json, `skip` if the
+ * puzzle needs a figure we don't have.
+ */
+export function winklerBank(
+  puzzles: readonly (Omit<BankPuzzle, 'status'> & { needs_figure?: boolean })[],
+  used: readonly WinklerUse[],
+): BankPuzzle[] {
+  return puzzles.map(({ needs_figure, ...puzzle }) => {
+    const use = used.find((entry) => entry.id === puzzle.id)
+    if (use) return { ...puzzle, status: 'used', teaser: use.teaser }
+    if (needs_figure) return { ...puzzle, status: 'skip', note: 'Needs a figure from the book' }
+    return { ...puzzle, status: 'available' }
+  })
+}
+
 /** The next teaser's number: one more than the highest `number:` in the existing teaser files. */
 export function nextNumber(teaserSources: readonly string[]): number {
   let highest = 0
@@ -137,8 +160,10 @@ export function bandOf(difficulty: number): Band {
 }
 
 /**
- * Picks the next puzzle. A Jane Street puzzle if this month has none yet and it's the 10th or later; otherwise
- * the difficulty band (easy / medium / hard) seen least among the last three teasers, then a random puzzle in it.
+ * Picks the next puzzle. A Jane Street puzzle if this month has none yet and it's the 10th or later (Jane Street
+ * comes only this way: their long grid puzzles would otherwise take over the hard band). Otherwise the difficulty
+ * band (easy / medium / hard) seen least among the last three teasers, then a random source with puzzles in that
+ * band (BrainStellar or Winkler), then a random puzzle.
  */
 export function pickPuzzle(input: {
   available: readonly BankPuzzle[]
@@ -158,14 +183,19 @@ export function pickPuzzle(input: {
     return janeStreet[randomIndex(janeStreet.length)]
   }
 
+  const others = available.filter((puzzle) => puzzle.source !== 'janestreet')
+  const pool = others.length > 0 ? others : available
   const lastThree = [...input.recent].sort((a, b) => b.number - a.number).slice(0, 3)
   const seen = (band: Band) => lastThree.filter((teaser) => bandOf(teaser.difficulty) === band).length
-  const bands = (['easy', 'medium', 'hard'] as const).filter((band) => available.some((p) => bandOf(p.difficulty) === band))
+  const bands = (['easy', 'medium', 'hard'] as const).filter((band) => pool.some((p) => bandOf(p.difficulty) === band))
   const fewest = Math.min(...bands.map(seen))
   const candidates = bands.filter((band) => seen(band) === fewest)
   const band = candidates.length === 1 ? candidates[0] : candidates[randomIndex(candidates.length)]
-  const inBand = available.filter((puzzle) => bandOf(puzzle.difficulty) === band)
-  return inBand[randomIndex(inBand.length)]
+  const inBand = pool.filter((puzzle) => bandOf(puzzle.difficulty) === band)
+  const sources = [...new Set(inBand.map((puzzle) => puzzle.source))]
+  const source = sources.length === 1 ? sources[0] : sources[randomIndex(sources.length)]
+  const fromSource = inBand.filter((puzzle) => puzzle.source === source)
+  return fromSource[randomIndex(fromSource.length)]
 }
 
 /**

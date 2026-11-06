@@ -9,8 +9,13 @@ links point to.
 and hints or solutions would sit next to the teaser we're solving), plus each puzzle's `source`, `difficulty`
 (from the ratings list) and a link to its page, which has the solution. It has all 97 BrainStellar puzzles and all
 153 Jane Street monthly puzzles (`source: "janestreet"`, numbered YYYYMM; many are a grid or diagram shown as an
-image from janestreet.com, and the current month's puzzle is `skip` until its solution is published). Winkler's
-book puzzles are not in the public repo (see CLAUDE.md).
+image from janestreet.com, and the current month's puzzle is `skip` until its solution is published).
+
+**Winkler's 313 puzzles** are from his book, so their texts stay out of this public repo: they live in the private
+repository `AramayisKhachatryan/brain-teasers-winkler` (`winkler.json`). The Daily teaser workflow checks it out with
+a read-only token (secret `WINKLER_TOKEN`) and picks from all three sources together. Only the puzzle that becomes a
+teaser is published. `winkler-used.json` here lists the Winkler puzzles already used (ids only). Puzzles that need
+one of the book's figures are skipped. Without the token, the job just leaves Winkler out.
 
 Each puzzle has a `status`:
 
@@ -31,7 +36,8 @@ Once that time is up (or the teaser is solved), it picks the next puzzle:
 
 - **A Jane Street puzzle once a month:** from the 10th, if the month has none yet.
 - **Mixed difficulty** otherwise: the band (easy 1–3, medium 4–5, hard 6+) seen least among the last three teasers,
-  then a random `available` puzzle in it.
+  then a random source with puzzles in that band (BrainStellar or Winkler; Jane Street only comes in the monthly
+  slot), then a random `available` puzzle from it.
 
 It writes the teaser with the next number and its difficulty, marks the puzzle `used`, runs the tests and the
 build, pushes to `main` and starts the deploy. "Give us a new teaser" in chat runs it with `--extra`.
