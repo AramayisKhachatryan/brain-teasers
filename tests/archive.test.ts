@@ -72,7 +72,7 @@ describe('solver filter', () => {
   })
 })
 
-describe('date order', () => {
+describe('order', () => {
   it('sorts newest first by default and oldest first on request', () => {
     expect(slugs(viewArchive(teasers, DEFAULT_VIEW))[0]).toBe('2026-10-29-open')
     expect(slugs(viewArchive(teasers, view({ order: 'oldest' })))).toEqual([
@@ -82,6 +82,17 @@ describe('date order', () => {
       '2026-10-28-nobody',
       '2026-10-29-open',
     ])
+  })
+
+  it('sorts by difficulty, newest first among equals', () => {
+    const rated = [
+      makeTeaser({ slug: '2026-10-01-a', difficulty: 4 }),
+      makeTeaser({ slug: '2026-10-02-b', difficulty: 7 }),
+      makeTeaser({ slug: '2026-10-03-c', difficulty: 4 }),
+      makeTeaser({ slug: '2026-10-04-d', difficulty: 2 }),
+    ]
+    expect(slugs(viewArchive(rated, view({ order: 'hardest' })))).toEqual(['2026-10-02-b', '2026-10-03-c', '2026-10-01-a', '2026-10-04-d'])
+    expect(slugs(viewArchive(rated, view({ order: 'easiest' })))).toEqual(['2026-10-04-d', '2026-10-03-c', '2026-10-01-a', '2026-10-02-b'])
   })
 
   it('does not reorder the list it was given', () => {

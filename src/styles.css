@@ -663,6 +663,26 @@ p {
   color: var(--muted);
 }
 
+.sort {
+  position: relative;
+}
+
+.sort__select {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  font-size: 16px; /* under 16px iOS zooms in */
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.sort:has(.sort__select:focus-visible) {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
 .sort__labels {
   display: grid;
 }
@@ -804,7 +824,7 @@ p {
 
 .row {
   display: grid;
-  grid-template-columns: 3.6rem 1fr auto;
+  grid-template-columns: 3.6rem 1fr auto auto;
   align-items: center;
   column-gap: 10px;
   min-height: 64px;
@@ -843,6 +863,20 @@ p {
   margin-top: 4px;
   font-weight: 500;
   font-size: 14px;
+}
+
+/* Difficulty 1–10, like a grade in the margin. */
+.row__difficulty {
+  display: grid;
+  place-items: center;
+  min-width: 30px;
+  height: 30px;
+  padding: 0 6px;
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  font: 600 15px/1 var(--font-ui);
+  font-variant-numeric: tabular-nums;
+  color: var(--muted);
 }
 
 .row__chevron {

@@ -5,12 +5,13 @@ import type { Person, Teaser } from './teaser'
 /** Who solved it: everyone's teasers, one person's (including ones solved together), only joint solves,
  * or the finished teasers neither of you solved. */
 export type SolverFilter = 'all' | Person | 'both' | 'nobody'
-export type DateOrder = 'newest' | 'oldest'
+/** By date, or by difficulty (ties: newest first). */
+export type SortOrder = 'newest' | 'oldest' | 'hardest' | 'easiest'
 
 export interface ArchiveView {
   query: string
   solver: SolverFilter
-  order: DateOrder
+  order: SortOrder
 }
 
 export const DEFAULT_VIEW: ArchiveView = { query: '', solver: 'all', order: 'newest' }
@@ -50,9 +51,11 @@ export function isFiltered(view: ArchiveView): boolean {
   return normalize(view.query) !== '' || view.solver !== 'all'
 }
 
-/** The archive as the view asks for it: matching teasers, sorted by date. */
+/** The archive as the view asks for it: matching teasers, sorted by date or difficulty. */
 export function viewArchive(teasers: readonly Teaser[], view: ArchiveView): Teaser[] {
   const sorted = newestFirst(teasers)
   if (view.order === 'oldest') sorted.reverse()
+  if (view.order === 'hardest') sorted.sort((a, b) => b.difficulty - a.difficulty)
+  if (view.order === 'easiest') sorted.sort((a, b) => a.difficulty - b.difficulty)
   return sorted.filter((teaser) => matchesQuery(teaser, view.query) && matchesSolver(teaser, view.solver))
 }

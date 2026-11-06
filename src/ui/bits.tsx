@@ -80,6 +80,9 @@ export function TeaserRow({ teaser }: { teaser: Teaser }) {
           <SolverMarks teaser={teaser} />
         </span>
       </span>
+      <span className="row__difficulty" aria-label={`difficulty ${teaser.difficulty} of 10`} title="Difficulty">
+        {teaser.difficulty}
+      </span>
       <ChevronRight className="row__chevron" aria-hidden="true" />
     </Link>
   )
