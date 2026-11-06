@@ -22,7 +22,7 @@ jobs:
   add:
     runs-on: ubuntu-latest
     env:
-      WINKLER_TOKEN: ${{ secrets.WINKLER_TOKEN }}
+      BANK_TOKEN: ${{ secrets.BANK_TOKEN }}
     steps:
       - uses: actions/checkout@v5
         with:
@@ -34,12 +34,12 @@ jobs:
       # Winkler's puzzles live in a private repository (they're from his book); a read-only token opens it.
       # Without the token, or if it fails, the job carries on with BrainStellar and Jane Street.
       - name: Check out the private Winkler puzzles
-        if: env.WINKLER_TOKEN != ''
+        if: env.BANK_TOKEN != ''
         continue-on-error: true
         uses: actions/checkout@v5
         with:
-          repository: AramayisKhachatryan/brain-teasers-winkler
-          token: ${{ env.WINKLER_TOKEN }}
+          repository: AramayisKhachatryan/brain-teasers-bank
+          token: ${{ env.BANK_TOKEN }}
           path: winkler-bank
       - run: npm ci
       - id: pick

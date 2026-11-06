@@ -12,8 +12,8 @@ and hints or solutions would sit next to the teaser we're solving), plus each pu
 image from janestreet.com, and the current month's puzzle is `skip` until its solution is published).
 
 **Winkler's 313 puzzles** are from his book, so their texts stay out of this public repo: they live in the private
-repository `AramayisKhachatryan/brain-teasers-winkler` (`winkler.json`). The Daily teaser workflow checks it out with
-a read-only token (secret `WINKLER_TOKEN`) and picks from all three sources together. Only the puzzle that becomes a
+repository `AramayisKhachatryan/brain-teasers-bank` (`winkler.json`). The Daily teaser workflow checks it out with
+a read-only token (secret `BANK_TOKEN`) and picks from all three sources together. Only the puzzle that becomes a
 teaser is published. `winkler-used.json` here lists the Winkler puzzles already used (ids only). Puzzles that need
 one of the book's figures are skipped. Without the token, the job just leaves Winkler out.
 
