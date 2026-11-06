@@ -34,8 +34,11 @@ Jane Street, rated 1–10). Each teaser gets **days to solve by difficulty** (1 
 in `puzzles/README.md`); when they're up, or the teaser is solved, a new one appears in the morning before 8:00
 Armenian time. Difficulties are mixed, with at least one Jane Street puzzle a month. If they solve it fast, they ask
 for a new one ("give us a new teaser"). The bank holds all BrainStellar (97) and Jane Street (153) questions. The
-313 Winkler puzzles (from his book *Mathematical Puzzles*) are kept out of the public repo, since that would
-republish most of a book; how to use them is Aramayis's call (pending since 6 Nov 2026). Teasers #1–#13 got difficulties from the
+313 Winkler puzzles (from his book *Mathematical Puzzles*) must never be committed to this public repo (that would
+republish most of a book): they live in the private repo `brain-teasers-winkler`, read by the morning job with the
+`WINKLER_TOKEN` secret (details in `puzzles/README.md`). To pick one by hand, clone it and run the script with
+`WINKLER_BANK=<path>/winkler.json`. A solved Winkler teaser's Notes end with
+`Source: Winkler, *Mathematical Puzzles*, puzzle #N`. Teasers #1–#13 got difficulties from the
 list where it has them, otherwise estimated on its scale. `.github/workflows/daily-teaser.yml` runs at 03:05 UTC (second try at 03:35, since GitHub sometimes drops scheduled runs): `node scripts/daily-teaser.ts` picks a random
 `available` puzzle from `puzzles/brainstellar.json` (logic in `src/core/daily.ts`), writes it as today's open teaser
 with the next number and its difficulty,
