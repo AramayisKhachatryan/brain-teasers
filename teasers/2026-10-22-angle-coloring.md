@@ -2,6 +2,7 @@
 number: 1
 date: 2026-10-22
 title: Angle-coloring game on an 8×8 board
+difficulty: 5
 status: solved
 solved_by: [aramayis, armen]
 ---

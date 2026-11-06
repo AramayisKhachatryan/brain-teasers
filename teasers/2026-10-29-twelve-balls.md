@@ -2,6 +2,7 @@
 number: 7
 date: 2026-10-29
 title: Twelve balls, three weighings
+difficulty: 6
 status: solved
 solved_by: [aramayis]
 solved_on: 2026-10-30

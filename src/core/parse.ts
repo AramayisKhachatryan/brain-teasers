@@ -16,7 +16,7 @@ export class TeaserFileError extends Error {
 export const FILE_NAME = /^(\d{4}-\d{2}-\d{2})-([a-z0-9]+(?:-[a-z0-9]+)*)\.md$/
 const SECTION_ORDER = ['Problem', 'Hints', 'Solution', 'Notes'] as const
 type SectionName = (typeof SECTION_ORDER)[number]
-const FRONT_MATTER_KEYS = ['number', 'date', 'title', 'status', 'solved_by'] as const
+const FRONT_MATTER_KEYS = ['number', 'date', 'title', 'difficulty', 'status', 'solved_by'] as const
 const OPTIONAL_KEYS = ['solved_on'] as const
 
 // Math follows Pandoc's rule, so money like "$5 or $10" stays text: the opening $ is followed by a
@@ -133,6 +133,11 @@ export function parseTeaserFile(fileName: string, source: string): Teaser {
     fail('title must be non-empty text (wrap it in "double quotes" if it contains a colon or " #")')
   }
 
+  const difficulty = fields.difficulty
+  if (typeof difficulty !== 'number' || !Number.isInteger(difficulty) || difficulty < 1 || difficulty > 10) {
+    fail('difficulty must be a whole number from 1 to 10 (see puzzles/difficulty-ratings.md)')
+  }
+
   const status = fields.status
   if (status !== 'open' && status !== 'solved') {
     fail('status must be "open" or "solved"')
@@ -194,6 +199,7 @@ export function parseTeaserFile(fileName: string, source: string): Teaser {
   return {
     slug: fileName.slice(0, -'.md'.length),
     number: number as number,
+    difficulty: difficulty as number,
     date: date as string,
     title: (title as string).trim(),
     status: status as Status,

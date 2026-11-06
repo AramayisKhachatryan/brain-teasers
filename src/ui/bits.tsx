@@ -1,6 +1,7 @@
 // Small shared pieces: links that use the router, rendered markdown, and "who solved it".
 import { Check, ChevronRight, Hourglass } from 'lucide-react'
 import type { MouseEvent, ReactNode } from 'react'
+import { daysToSolve } from '../core/daily'
 import { daysBetween, shortDate } from '../core/dates'
 import { hrefFor, navigate, type Route } from '../core/router'
 import { DISPLAY_NAME, type Teaser } from '../core/teaser'
@@ -84,6 +85,18 @@ export function TeaserRow({ teaser }: { teaser: Teaser }) {
   )
 }
 
+/** "Difficulty 6 of 10 · 3 days to solve" while open; "Difficulty 6 of 10 · 6 points" once finished. */
+export function DifficultyLine({ teaser }: { teaser: Teaser }) {
+  const d = teaser.difficulty
+  const days = daysToSolve(d)
+  const rest = teaser.status === 'open' ? (days === 1 ? '1 day to solve' : `${days} days to solve`) : d === 1 ? '1 point' : `${d} points`
+  return (
+    <p className="meta-line">
+      Difficulty {d} of 10 · {rest}
+    </p>
+  )
+}
+
 /** Teaser page: one sentence. */
 export function SolvedLine({ teaser }: { teaser: Teaser }) {
   const days = daysTaken(teaser)
@@ -106,5 +119,5 @@ export function SolvedLine({ teaser }: { teaser: Teaser }) {
       </>
     )
   }
-  return <p className="solved-line">{content}</p>
+  return <p className="meta-line">{content}</p>
 }

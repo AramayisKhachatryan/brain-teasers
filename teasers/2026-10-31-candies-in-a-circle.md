@@ -2,6 +2,7 @@
 number: 8
 date: 2026-10-31
 title: Candies in a circle
+difficulty: 6
 status: solved
 solved_by: []
 solved_on: 2026-11-01

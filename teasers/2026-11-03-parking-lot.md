@@ -2,6 +2,7 @@
 number: 11
 date: 2026-11-03
 title: Parking lot
+difficulty: 7
 status: solved
 solved_by: []
 solved_on: 2026-11-04

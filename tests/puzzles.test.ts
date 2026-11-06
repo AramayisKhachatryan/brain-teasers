@@ -24,7 +24,9 @@ describe('puzzles/brainstellar.json', () => {
   it.each(bank.map((p) => [p.id, p] as const))('%s is well formed', (_id, p) => {
     expect(p.title.trim()).not.toBe('')
     expect(p.question.trim()).not.toBe('')
-    expect(p.link).toMatch(/^https:\/\/brainstellar\.com\/puzzles\//)
+    expect(['brainstellar', 'winkler', 'janestreet']).toContain(p.source)
+    expect(Number.isInteger(p.difficulty) && p.difficulty >= 1 && p.difficulty <= 10).toBe(true)
+    if (p.source === 'brainstellar') expect(p.link).toMatch(/^https:\/\/brainstellar\.com\/puzzles\//)
     expect(['available', 'used', 'skip']).toContain(p.status)
     if (p.status === 'used') expect(existsSync(`${teasersDir}${p.teaser}.md`)).toBe(true)
     if (p.status === 'skip') expect(p.note?.trim()).toBeTruthy()

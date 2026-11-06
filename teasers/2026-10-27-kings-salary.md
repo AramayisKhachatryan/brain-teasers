@@ -2,6 +2,7 @@
 number: 5
 date: 2026-10-27
 title: King's salary
+difficulty: 6
 status: solved
 solved_by: [aramayis]
 solved_on: 2026-10-27
