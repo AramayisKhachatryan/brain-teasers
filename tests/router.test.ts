@@ -7,6 +7,7 @@ describe('parseHash', () => {
     ['#', { name: 'home' }],
     ['#/', { name: 'home' }],
     ['#/calendar', { name: 'calendar' }],
+    ['#/stats', { name: 'stats' }],
     ['#/archive', { name: 'archive' }],
     ['#/archive/', { name: 'archive' }],
     ['#/t/2026-10-29-even-rolls', { name: 'teaser', slug: '2026-10-29-even-rolls' }],

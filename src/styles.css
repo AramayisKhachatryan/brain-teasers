@@ -14,6 +14,9 @@
   --band: rgba(28, 38, 51, 0.09);
   --aramayis: #2c59a3;
   --armen: #b8372f;
+  /* Chart marks (lines, bars); checked for colour-blind separation on each paper. */
+  --aramayis-mark: #2c59a3;
+  --armen-mark: #b8372f;
 
   --font-read: 'Literata Variable', 'Iowan Old Style', Georgia, serif;
   --font-ui: -apple-system, BlinkMacSystemFont, 'SF Pro Text', Inter, system-ui, sans-serif;
@@ -38,6 +41,8 @@
     --band: rgba(227, 233, 224, 0.1);
     --aramayis: #8fb1ec;
     --armen: #ee8d85;
+    --aramayis-mark: #5f8be6;
+    --armen-mark: #e0645a;
   }
 }
 
@@ -1271,3 +1276,307 @@ p {
     scroll-behavior: auto !important;
   }
 }
+
+/* ---------- Stats ---------- */
+
+.stats-intro {
+  margin-bottom: 8px;
+  font-size: 15px;
+  color: var(--muted);
+}
+
+.stats-section {
+  margin-top: 32px;
+}
+
+.stats-section__title {
+  margin-bottom: 12px;
+  font-family: var(--font-read);
+  font-weight: 600;
+  font-size: 1.3125rem;
+}
+
+.chart {
+  position: relative;
+}
+
+.chart__legend {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 6px;
+  font-weight: 500;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.chart__key {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.chart__swatch {
+  display: inline-block;
+  width: 14px;
+  height: 3px;
+  border-radius: 2px;
+  vertical-align: middle;
+}
+
+.chart__swatch--aramayis {
+  background: var(--aramayis-mark);
+}
+
+.chart__swatch--armen {
+  background: var(--armen-mark);
+}
+
+.chart__plot {
+  position: relative;
+  touch-action: pan-y;
+}
+
+.chart svg {
+  display: block;
+  overflow: visible;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.chart__grid {
+  stroke: var(--rule);
+  stroke-width: 1;
+}
+
+.chart__axis {
+  font-family: var(--font-ui);
+  font-size: 12px;
+  fill: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.chart__cross {
+  stroke: var(--muted);
+  stroke-width: 1;
+  stroke-dasharray: 3 3;
+}
+
+.chart__line {
+  fill: none;
+  stroke-width: 2;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.chart__line--aramayis {
+  stroke: var(--aramayis-mark);
+}
+
+.chart__line--armen {
+  stroke: var(--armen-mark);
+}
+
+.chart__dot {
+  stroke: var(--paper);
+  stroke-width: 2;
+}
+
+.chart__dot--aramayis {
+  fill: var(--aramayis-mark);
+}
+
+.chart__dot--armen {
+  fill: var(--armen-mark);
+}
+
+.chart__end {
+  font-family: var(--font-ui);
+  fill: var(--ink);
+}
+
+.chart__end-name {
+  font-size: 12px;
+  fill: var(--muted);
+}
+
+.chart__end-value {
+  font-weight: 600;
+  font-size: 15px;
+  font-variant-numeric: tabular-nums;
+}
+
+.chart__tip {
+  position: absolute;
+  top: 0;
+  width: 180px;
+  padding: 8px 10px;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  background: var(--field);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  font-size: 13px;
+  pointer-events: none;
+}
+
+.chart__tip-date {
+  font-weight: 600;
+}
+
+.chart__tip-points {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+.chart__tip-points .chart__swatch {
+  margin-right: 5px;
+}
+
+.chart__tip-teaser {
+  margin-top: 2px;
+  color: var(--muted);
+}
+
+.duel {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 15px;
+  font-variant-numeric: tabular-nums;
+}
+
+.duel th,
+.duel td {
+  padding: 9px 0;
+  border-bottom: 1px solid var(--rule);
+  text-align: right;
+  vertical-align: top;
+}
+
+.duel thead th {
+  padding-top: 0;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.duel tbody th {
+  text-align: left;
+  font-weight: 500;
+}
+
+.duel td {
+  width: 6.5rem;
+  color: var(--muted);
+}
+
+.duel td.duel__lead {
+  color: var(--ink);
+  font-weight: 700;
+}
+
+.duel__note {
+  display: block;
+  font-weight: 400;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.hardest {
+  margin-top: 10px;
+  padding: 0;
+  list-style: none;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.tiles {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.tile {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 12px 14px;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  background: var(--field);
+}
+
+.tile__value {
+  font-family: var(--font-read);
+  font-weight: 600;
+  font-size: 1.75rem;
+  line-height: 1.1;
+  font-variant-numeric: lining-nums tabular-nums;
+}
+
+.tile__label {
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.bands {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.band__label {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 6px;
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.band__count {
+  font-weight: 400;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.band__row {
+  display: grid;
+  grid-template-columns: 5.5rem 1fr 4rem;
+  align-items: center;
+  gap: 10px;
+  margin-top: 4px;
+  font-size: 14px;
+}
+
+.band__track {
+  height: 8px;
+  border-radius: 4px;
+  background: var(--band);
+  overflow: hidden;
+}
+
+.band__bar {
+  display: block;
+  height: 100%;
+  border-radius: 4px;
+}
+
+.band__bar--aramayis {
+  background: var(--aramayis-mark);
+}
+
+.band__bar--armen {
+  background: var(--armen-mark);
+}
+
+.band__value {
+  text-align: right;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.stats-foot {
+  margin-top: 28px;
+  font-size: 14px;
+  color: var(--muted);
+}
+

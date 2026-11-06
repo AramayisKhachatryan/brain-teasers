@@ -19,6 +19,7 @@ const SHOTS = [
   { name: 'home', build: 'real', hash: '#/' },
   { name: 'home-notify-code', build: 'real', hash: '#/', permission: 'granted', storage: { 'teasers.notificationCode': 'teasers-push:BExampleCode' }, scrollToEnd: true },
   { name: 'archive-real', build: 'real', hash: '#/archive' },
+  { name: 'stats', build: 'real', hash: '#/stats', fullPage: true },
   { name: 'archive-search', build: 'real', hash: '#/archive', search: 'king' },
   { name: 'archive-search-number', build: 'real', hash: '#/archive', search: '#9' },
   { name: 'archive-both-oldest', build: 'real', hash: '#/archive', taps: [['button', 'Both'], ['button', 'Sorted Newest first']] },

@@ -22,11 +22,11 @@ function buildVersion(version) {
   fs.mkdirSync(teasers, { recursive: true })
   fs.writeFileSync(
     path.join(teasers, '2026-10-01-older-one.md'),
-    '---\ndate: 2026-10-01\ntitle: An older one\nstatus: solved\nsolved_by: [armen]\n---\n\n## Problem\nP\n\n## Solution\nS\n',
+    '---\nnumber: 1\ndate: 2026-10-01\ntitle: An older one\ndifficulty: 3\nstatus: solved\nsolved_by: [armen]\n---\n\n## Problem\nP\n\n## Solution\nS\n',
   )
   fs.writeFileSync(
     path.join(teasers, '2026-10-02-current.md'),
-    `---\ndate: 2026-10-02\ntitle: Version ${version}\nstatus: open\nsolved_by: []\n---\n\n## Problem\nP\n`,
+    `---\nnumber: 2\ndate: 2026-10-02\ntitle: Version ${version}\ndifficulty: 3\nstatus: open\nsolved_by: []\n---\n\n## Problem\nP\n`,
   )
   execSync(`npx vite build --logLevel error --outDir "${path.join(WORK, `build-${version}`)}"`, {
     cwd: ROOT,

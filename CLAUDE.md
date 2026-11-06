@@ -106,15 +106,19 @@ Node **22.22.0** (`.nvmrc`; the workflows read it). Dependencies are pinned to e
 
 - `src/core/`: plain TypeScript, no React. `parse.ts` (parse + validate a teaser file, render markdown/math),
   `score.ts`, `select.ts` (current teaser = newest open; archive = everything else), `router.ts` (hash router:
-  `#/`, `#/calendar`, `#/archive`, `#/t/<file-name>`; each in-app navigation stores the screen it came from in
+  `#/`, `#/calendar`, `#/archive`, `#/stats`, `#/t/<file-name>`; each in-app navigation stores the screen it came from in
   `history.state`, which drives the teaser page's Back label and the active tab), `dates.ts`, `archive.ts`
   (Archive search by title or number ("11", "#11"), newest/oldest order, solver filter chips Aramayis/Armen/Both/Nobody where a
   name includes joint solves and Nobody means finished but unsolved; no chip selected shows everything, tapping
   the selected chip again clears it, and "Show all" clears search and filter), `calendar.ts` (month grid, Monday first; a teaser marks the day it was given, and its
-  days until `solved_on`, or until today while open, form a "still solving" stretch).
+  days until `solved_on`, or until today while open, form a "still solving" stretch), `stats.ts` (the Stats
+  tab: points over time by the day each teaser was finished, head to head (solved, rate, streaks, solo, average and
+  hardest difficulty), together (both, nobody, days per teaser, hints) and by difficulty band; finished teasers only).
 - `build/teasersPlugin.ts`: turns each `teasers/*.md` into a module at build time. **A malformed teaser fails the
   build**, so a typo can't break the live app; so does a numbering mistake (a gap, a repeat, numbers out of date order). `tests/teasers.test.ts` checks every real file too.
-- `src/ui/`: screens (Home, Calendar, Archive, Teaser page), the tab bar (Current, Calendar, Archive), folds.
+- `src/ui/`: screens (Home, Calendar, Archive, Stats, Teaser page), the tab bar (Current, Calendar, Archive, Stats), folds.
+  `PointsChart.tsx` draws the points chart in SVG (tap a day for its numbers); chart marks use `--aramayis-mark` /
+  `--armen-mark`, checked for colour-blind separation on both papers.
   The Archive's search/filter/sort and the Calendar's month live in `App.tsx`, so they survive opening a teaser
   and coming back. In the Calendar, tapping a day with one teaser opens it; a day with several lists them. `src/styles.css`: all styling and design tokens.
 - `src/updates.ts`: service worker registration and update handling (see below).
