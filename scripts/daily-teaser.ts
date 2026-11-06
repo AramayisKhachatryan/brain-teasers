@@ -27,7 +27,7 @@ const TEASERS = new URL('../teasers/', import.meta.url)
 const DAYS_OFF = new URL('../puzzles/days-off.json', import.meta.url)
 const WINKLER_USED = new URL('../puzzles/winkler-used.json', import.meta.url)
 // Winkler's puzzles come from a private repository (the texts are from his book, so they stay out of this public
-// repo). The Daily teaser workflow checks it out when the WINKLER_TOKEN secret is set; without it, no Winkler.
+// repo). The Daily teaser workflow checks it out when the BANK_TOKEN secret is set; without it, no Winkler.
 const WINKLER_BANK = process.env.WINKLER_BANK ?? new URL('../winkler-bank/winkler.json', import.meta.url).pathname
 
 const args = process.argv.slice(2)
