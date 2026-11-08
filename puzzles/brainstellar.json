@@ -932,7 +932,8 @@
     "category": "probability",
     "link": "https://brainstellar.com/puzzles/hard/213",
     "question": "On pressing a button, a random number is generated uniformly between 0 & 1. You keep on generating these numbers until their sum exceeds 1. What is the probability that you need to press the button more than n times? What is the expected number of times you need to press the button?",
-    "status": "available"
+    "status": "used",
+    "teaser": "2026-11-08-sum-to-one"
   },
   {
     "id": "brainstellar-215",
