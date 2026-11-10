@@ -1956,7 +1956,8 @@
     "category": "jane street",
     "link": "https://www.janestreet.com/puzzles/single-cross-index/",
     "question": "A random line segment of length D is chosen on a plane marked with an\ninfinite checkerboard grid (i.e., a unit side length square grid).\nWhat length D maximizes the probability that the segment crosses\nexactly one line on the checkerboard grid, and what is this maximal\nprobability?",
-    "status": "available"
+    "status": "used",
+    "teaser": "2026-11-11-single-cross"
   },
   {
     "id": "janestreet-2020-01",
