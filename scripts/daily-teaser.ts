@@ -7,6 +7,7 @@
 //   node scripts/daily-teaser.ts --date 2026-11-03
 //   node scripts/daily-teaser.ts --extra      add one now, even if today already has a teaser ("a new teaser")
 //   node scripts/daily-teaser.ts --exclude brainstellar-1005   never pick these puzzle ids this time
+//   node scripts/daily-teaser.ts --extra --pick janestreet-2020-02 --days 10   this puzzle, with 10 days to solve
 import { randomInt } from 'node:crypto'
 import { appendFileSync, existsSync, readdirSync, readFileSync, writeFileSync } from 'node:fs'
 import {
@@ -48,11 +49,15 @@ const sources = teaserFiles.map((name) => readFileSync(new URL(name, TEASERS), '
 const number = nextNumber(sources)
 const recent = sources.map(summarize).filter((summary): summary is TeaserSummary => summary !== null)
 const exclude = args.includes('--exclude') ? args[args.indexOf('--exclude') + 1].split(',') : []
+const pick = args.includes('--pick') ? args[args.indexOf('--pick') + 1] : undefined
+const days = args.includes('--days') ? Number(args[args.indexOf('--days') + 1]) : undefined
 const plan = planDailyTeaser({
   bank,
   teaserFiles,
   recent,
   exclude,
+  pick,
+  days,
   number,
   date,
   randomIndex: (count) => randomInt(count),

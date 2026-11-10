@@ -32,6 +32,9 @@ Every morning `.github/workflows/daily-teaser.yml` runs `node scripts/daily-teas
 |---|---|---|---|---|---|---|
 | Days | 1 | 2 | 3 | 4 | 5 | 7 |
 
+A teaser can carry its own `days:` (1–31) when Aramayis asks for a different time; the job then waits that long.
+`--pick <id> --days <n>` adds a particular puzzle with its own time.
+
 Once that time is up (or the teaser is solved), it picks the next puzzle:
 
 - **A Jane Street puzzle once a month:** from the 10th, if the month has none yet.

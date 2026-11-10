@@ -22,7 +22,8 @@ and Claude is the one who edits those files.
 The file format and validation rules are in [`teasers/README.md`](teasers/README.md). Summary:
 `teasers/YYYY-MM-DD-short-name.md` (the date it was given), front matter `number` (#1, #2, … in date order, no
 gaps; shown before the title as "#11 Parking lot"; a new teaser gets the next one), `date`, `title`, `difficulty`
-(1–10: each solver gets that many points, and it sets the days to solve), `status`
+(1–10: each solver gets that many points, and it sets the days to solve), optional `days` (days to solve set by
+hand when Aramayis asks, e.g. 10 for a Jane Street puzzle), `status`
 (`open`|`solved`), `solved_by` (`[]`, `[aramayis]`, `[armen]`, `[aramayis, armen]`), optional `solved_on`
 (the day they finished; solving often takes more than a day), then `## Problem`, `## Hints`, `## Solution`,
 `## Notes`. Teasers #1 to #7 (22–29 Oct 2026) were imported from the list and notes Aramayis sent.

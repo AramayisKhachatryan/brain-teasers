@@ -17,7 +17,7 @@ export const FILE_NAME = /^(\d{4}-\d{2}-\d{2})-([a-z0-9]+(?:-[a-z0-9]+)*)\.md$/
 const SECTION_ORDER = ['Problem', 'Hints', 'Solution', 'Notes'] as const
 type SectionName = (typeof SECTION_ORDER)[number]
 const FRONT_MATTER_KEYS = ['number', 'date', 'title', 'difficulty', 'status', 'solved_by'] as const
-const OPTIONAL_KEYS = ['solved_on'] as const
+const OPTIONAL_KEYS = ['solved_on', 'days'] as const
 
 // Math follows Pandoc's rule, so money like "$5 or $10" stays text: the opening $ is followed by a
 // non-space, the closing $ comes right after a non-space and is not followed by a digit. `$$…$$` is display math.
@@ -164,6 +164,15 @@ export function parseTeaserFile(fileName: string, source: string): Teaser {
     solvedOn = value as string
   }
 
+  let days: number | null = null
+  if ('days' in fields) {
+    const value = fields.days
+    if (typeof value !== 'number' || !Number.isInteger(value) || value < 1 || value > 31) {
+      fail('days must be a whole number of days from 1 to 31 (leave it out to follow the difficulty)')
+    }
+    days = value as number
+  }
+
   const sections = splitSections(body, fail)
 
   if (!sections.has('Problem')) fail('the "## Problem" section is missing')
@@ -205,6 +214,7 @@ export function parseTeaserFile(fileName: string, source: string): Teaser {
     status: status as Status,
     solvedBy,
     solvedOn,
+    days,
     problem: render('Problem')!,
     hints: render('Hints'),
     hintCount: hintsSource === undefined ? 0 : countListItems(hintsSource),

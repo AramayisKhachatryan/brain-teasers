@@ -25,6 +25,8 @@ export interface Teaser {
   solvedBy: Person[]
   /** `YYYY-MM-DD` the day it was finished, when known. Solving sometimes takes more than a day. */
   solvedOn: string | null
+  /** Days to solve, when set by hand (`days:`); otherwise it follows the difficulty (daysToSolve). */
+  days: number | null
   /** Rendered HTML of each section. Only `problem` exists while a teaser is open. */
   problem: string
   hints: string | null

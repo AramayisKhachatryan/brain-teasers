@@ -54,7 +54,12 @@ export function slugify(title: string): string {
 }
 
 /** The teaser file for a bank puzzle: open, with the question as the problem and nothing else. */
-export function teaserFile(puzzle: BankPuzzle, date: string, number: number): { fileName: string; content: string } {
+export function teaserFile(
+  puzzle: BankPuzzle,
+  date: string,
+  number: number,
+  days?: number,
+): { fileName: string; content: string } {
   const fileName = `${date}-${slugify(puzzle.title)}.md`
   const content = [
     '---',
@@ -62,6 +67,7 @@ export function teaserFile(puzzle: BankPuzzle, date: string, number: number): { 
     `date: ${date}`,
     `title: ${JSON.stringify(puzzle.title)}`,
     `difficulty: ${puzzle.difficulty}`,
+    ...(days ? [`days: ${days}`] : []),
     'status: open',
     'solved_by: []',
     '---',
@@ -102,6 +108,8 @@ export interface TeaserSummary {
   date: string
   difficulty: number
   status: 'open' | 'solved'
+  /** Days to solve set by hand, if any. */
+  days?: number
 }
 
 export function summarize(source: string): TeaserSummary | null {
@@ -111,7 +119,8 @@ export function summarize(source: string): TeaserSummary | null {
   const date = field('date')
   const status = field('status')
   if (!number || !difficulty || !date || (status !== 'open' && status !== 'solved')) return null
-  return { number, date, difficulty, status }
+  const days = Number(field('days'))
+  return days ? { number, date, difficulty, status, days } : { number, date, difficulty, status }
 }
 
 /** One Winkler puzzle used as a teaser (puzzles/winkler-used.json). The texts live in a private repository. */
@@ -216,6 +225,10 @@ export function planDailyTeaser(input: {
   daysOff?: readonly DayOff[]
   /** Puzzles not to pick this time, e.g. the one a replaced teaser had. */
   exclude?: readonly string[]
+  /** This puzzle and no other (Aramayis asked for a particular one). */
+  pick?: string
+  /** Days to solve set by hand, instead of the difficulty's. */
+  days?: number
 }): DailyPlan {
   const recent = input.recent ?? []
   if (!input.extra) {
@@ -227,17 +240,21 @@ export function planDailyTeaser(input: {
     }
     const newest = [...recent].sort((a, b) => b.number - a.number)[0]
     if (newest && newest.status === 'open') {
-      const next = addDays(newest.date, daysToSolve(newest.difficulty))
+      const next = addDays(newest.date, newest.days ?? daysToSolve(newest.difficulty))
       if (input.date < next) {
         return { action: 'skip', reason: `#${newest.number} (difficulty ${newest.difficulty}) is still being solved; the next teaser is due ${next}` }
       }
     }
   }
   const available = input.bank.filter((puzzle) => puzzle.status === 'available' && !input.exclude?.includes(puzzle.id))
-  const puzzle = pickPuzzle({ available, bank: input.bank, recent, date: input.date, randomIndex: input.randomIndex })
-  if (!puzzle) return { action: 'skip', reason: 'the puzzle bank has no unused puzzles left' }
+  const puzzle = input.pick
+    ? (available.find((entry) => entry.id === input.pick) ?? null)
+    : pickPuzzle({ available, bank: input.bank, recent, date: input.date, randomIndex: input.randomIndex })
+  if (!puzzle) {
+    return { action: 'skip', reason: input.pick ? `${input.pick} is not an available puzzle` : 'the puzzle bank has no unused puzzles left' }
+  }
 
-  const { fileName, content } = teaserFile(puzzle, input.date, input.number)
+  const { fileName, content } = teaserFile(puzzle, input.date, input.number, input.days)
   if (input.teaserFiles.includes(fileName)) return { action: 'skip', reason: `teasers/${fileName} already exists` }
   const teaser = fileName.slice(0, -'.md'.length)
   const bank = input.bank.map((entry) => (entry.id === puzzle.id ? { ...entry, status: 'used' as const, teaser } : entry))
