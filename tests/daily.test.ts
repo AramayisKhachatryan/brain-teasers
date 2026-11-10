@@ -215,3 +215,32 @@ describe('winklerBank', () => {
     }
   })
 })
+
+describe('days set by hand', () => {
+  const bank = [puzzle(1, 'available', 'One', 3), puzzle(2, 'available', 'Two', 6, 'janestreet')]
+  const open = (days?: number): TeaserSummary => ({ number: 15, date: '2026-11-11', difficulty: 6, status: 'open', ...(days ? { days } : {}) })
+
+  it('waits the days written in the teaser instead of the difficulty’s', () => {
+    const run = (date: string, recent: TeaserSummary[]) =>
+      planDailyTeaser({ number: 16, bank, teaserFiles: [], recent, date, randomIndex: () => 0 }).action
+    expect(run('2026-11-14', [open()])).toBe('add') // difficulty 6: 3 days
+    expect(run('2026-11-20', [open(10)])).toBe('skip')
+    expect(run('2026-11-21', [open(10)])).toBe('add')
+  })
+
+  it('picks the puzzle asked for and writes its days', () => {
+    const plan = planDailyTeaser({ number: 16, bank, teaserFiles: [], date: '2026-11-11', randomIndex: () => 0, extra: true, pick: 'janestreet-2', days: 10 })
+    expect(plan.action === 'add' && plan.puzzle.id).toBe('janestreet-2')
+    expect(plan.action === 'add' && plan.content).toContain('days: 10\n')
+    const parsed = plan.action === 'add' ? parseTeaserFile(plan.fileName, plan.content) : null
+    expect(parsed?.days).toBe(10)
+    expect(summarize(plan.action === 'add' ? plan.content : '')?.days).toBe(10)
+  })
+
+  it('says so when the puzzle asked for is not available', () => {
+    expect(planDailyTeaser({ number: 16, bank, teaserFiles: [], date: '2026-11-11', randomIndex: () => 0, extra: true, pick: 'nope' })).toEqual({
+      action: 'skip',
+      reason: 'nope is not an available puzzle',
+    })
+  })
+})

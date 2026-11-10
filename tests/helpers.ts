@@ -35,6 +35,7 @@ export function makeTeaser(overrides: Partial<Teaser> & Pick<Teaser, 'slug'>): T
     status: 'solved',
     solvedBy: [],
     solvedOn: null,
+    days: null,
     problem: '<p>Problem</p>',
     hints: null,
     hintCount: 0,

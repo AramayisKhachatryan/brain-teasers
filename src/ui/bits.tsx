@@ -91,7 +91,7 @@ export function TeaserRow({ teaser }: { teaser: Teaser }) {
 /** "Difficulty 6 of 10 · 3 days to solve" while open; "Difficulty 6 of 10 · 6 points" once finished. */
 export function DifficultyLine({ teaser }: { teaser: Teaser }) {
   const d = teaser.difficulty
-  const days = daysToSolve(d)
+  const days = teaser.days ?? daysToSolve(d)
   const rest = teaser.status === 'open' ? (days === 1 ? '1 day to solve' : `${days} days to solve`) : d === 1 ? '1 point' : `${d} points`
   return (
     <p className="meta-line">
