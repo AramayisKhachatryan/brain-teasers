@@ -23,7 +23,8 @@ The file format and validation rules are in [`teasers/README.md`](teasers/README
 `teasers/YYYY-MM-DD-short-name.md` (the date it was given), front matter `number` (#1, #2, … in date order, no
 gaps; shown before the title as "#11 Parking lot"; a new teaser gets the next one), `date`, `title`, `difficulty`
 (1–10: each solver gets that many points, and it sets the days to solve), optional `days` (days to solve set by
-hand when Aramayis asks, e.g. 10 for a Jane Street puzzle), `status`
+hand when Aramayis asks, e.g. 10 for a Jane Street puzzle), optional `jane_street: "YYYY-MM"` (a Jane Street
+puzzle and the month it was published; the app shows a "Jane Street · February 2020" tag; the script adds it), `status`
 (`open`|`solved`), `solved_by` (`[]`, `[aramayis]`, `[armen]`, `[aramayis, armen]`), optional `solved_on`
 (the day they finished; solving often takes more than a day), then `## Problem`, `## Hints`, `## Solution`,
 `## Notes`. Teasers #1 to #7 (22–29 Oct 2026) were imported from the list and notes Aramayis sent.
@@ -39,7 +40,8 @@ for a new one ("give us a new teaser"). The bank holds all BrainStellar (97) and
 republish most of a book): they live in the private repo `brain-teasers-bank`, read by the morning job with the
 `BANK_TOKEN` secret (details in `puzzles/README.md`). To pick one by hand, clone it and run the script with
 `WINKLER_BANK=<path>/winkler.json`. A solved Winkler teaser's Notes end with
-`Source: Winkler, *Mathematical Puzzles*, puzzle #N`. Teasers #1–#13 got difficulties from the
+`Source: Winkler, *Mathematical Puzzles*, puzzle #N`; a Jane Street one's with
+`Source: [Jane Street, <Month YYYY>](link)` (the solution page is linked from there, so only once solved). Teasers #1–#13 got difficulties from the
 list where it has them, otherwise estimated on its scale. `.github/workflows/daily-teaser.yml` runs at 03:05 UTC (second try at 03:35, since GitHub sometimes drops scheduled runs): `node scripts/daily-teaser.ts` picks a random
 `available` puzzle from `puzzles/brainstellar.json` (logic in `src/core/daily.ts`), writes it as today's open teaser
 with the next number and its difficulty,

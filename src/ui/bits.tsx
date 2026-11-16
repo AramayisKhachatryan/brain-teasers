@@ -2,7 +2,7 @@
 import { Check, ChevronRight, Hourglass } from 'lucide-react'
 import type { MouseEvent, ReactNode } from 'react'
 import { daysToSolve } from '../core/daily'
-import { daysBetween, shortDate } from '../core/dates'
+import { daysBetween, monthLabel, shortDate } from '../core/dates'
 import { hrefFor, navigate, type Route } from '../core/router'
 import { DISPLAY_NAME, type Teaser } from '../core/teaser'
 
@@ -67,6 +67,18 @@ export function TeaserTitle({ teaser }: { teaser: Teaser }) {
   )
 }
 
+/** "Jane Street · February 2020": where a puzzle comes from, when that's worth a tag. */
+export function SourceTag({ teaser, short = false }: { teaser: Teaser; short?: boolean }) {
+  if (!teaser.janeStreet) return null
+  const month = monthLabel(`${teaser.janeStreet}-01`)
+  return (
+    <span className="source-tag" title={`Jane Street puzzle of ${month}`}>
+      Jane Street
+      <span className="source-tag__month">{short ? month.replace(/^(\w{3})\w*/, '$1') : month}</span>
+    </span>
+  )
+}
+
 /** One teaser in a list (Archive, and a day with several teasers in the Calendar). */
 export function TeaserRow({ teaser }: { teaser: Teaser }) {
   return (
@@ -77,6 +89,7 @@ export function TeaserRow({ teaser }: { teaser: Teaser }) {
           <TeaserTitle teaser={teaser} />
         </span>
         <span className="row__solvers">
+          <SourceTag teaser={teaser} short />
           <SolverMarks teaser={teaser} />
         </span>
       </span>

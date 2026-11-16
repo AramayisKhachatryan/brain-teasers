@@ -3,6 +3,7 @@ number: 16
 date: 2026-11-11
 title: "Single-Cross"
 difficulty: 6
+jane_street: "2020-02"
 days: 10
 status: open
 solved_by: []

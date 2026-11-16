@@ -3,6 +3,7 @@ number: 6
 date: 2026-10-27
 title: Two random points
 difficulty: 6
+jane_street: "2019-08"
 status: solved
 solved_by: [aramayis, armen]
 solved_on: 2026-10-28

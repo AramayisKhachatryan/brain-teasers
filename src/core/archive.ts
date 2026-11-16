@@ -32,8 +32,8 @@ export function normalize(text: string): string {
  * Every word of the query appears somewhere in the title, in any order. A number (with or without "#") also
  * finds the teaser with that number: "11" and "#11" find #11.
  */
-export function matchesQuery(teaser: Pick<Teaser, 'number' | 'title'>, query: string): boolean {
-  const haystack = normalize(teaser.title)
+export function matchesQuery(teaser: Pick<Teaser, 'number' | 'title'> & { janeStreet?: string | null }, query: string): boolean {
+  const haystack = normalize(teaser.janeStreet ? `${teaser.title} jane street` : teaser.title)
   return normalize(query)
     .split(' ')
     .every((word) => haystack.includes(word) || word === String(teaser.number))

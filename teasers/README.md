@@ -20,6 +20,7 @@ status: open          # open while we're solving, solved when we're done
 solved_by: []         # who solved it: [aramayis], [armen], [aramayis, armen] or []
 solved_on: 2026-10-30 # optional, solved teasers only: the day we finished
 days: 10              # optional: days to solve set by hand (otherwise they follow the difficulty)
+jane_street: "2020-02" # optional, Jane Street puzzles: the month it was published there (shown as a tag)
 ---
 
 ## Problem

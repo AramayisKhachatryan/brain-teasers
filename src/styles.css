@@ -1614,3 +1614,31 @@ p {
   color: var(--muted);
 }
 
+/* Where a puzzle comes from: a Jane Street puzzle carries the month it was published there. */
+.source-tag {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  align-self: flex-start;
+  padding: 3px 9px;
+  border: 1px solid var(--ink);
+  border-radius: 999px;
+  font: 600 13px/1.3 var(--font-ui);
+  letter-spacing: 0.01em;
+  color: var(--ink);
+}
+
+.source-tag__month {
+  font-weight: 400;
+  color: var(--muted);
+}
+
+.teaser__meta .source-tag {
+  margin-bottom: 6px;
+}
+
+.row__solvers .source-tag {
+  padding: 1px 7px;
+  font-size: 12px;
+}
+
