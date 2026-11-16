@@ -67,6 +67,7 @@ export function teaserFile(
     `date: ${date}`,
     `title: ${JSON.stringify(puzzle.title)}`,
     `difficulty: ${puzzle.difficulty}`,
+    ...(puzzle.source === 'janestreet' ? [`jane_street: "${puzzle.id.slice('janestreet-'.length)}"`] : []),
     ...(days ? [`days: ${days}`] : []),
     'status: open',
     'solved_by: []',

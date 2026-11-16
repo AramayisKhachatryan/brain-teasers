@@ -163,6 +163,7 @@ describe('parseTeaserFile: malformed files fail with a clear message', () => {
     ['invalid YAML', NAME, teaserFile({ title: '[oops' }), /not valid YAML/],
     ['unknown key', NAME, teaserFile({ extraFrontMatter: 'solvedby: []\n' }), /unknown front matter key "solvedby"/],
     ['missing key', NAME, '---\nnumber: 1\ndate: 2026-10-29\ntitle: T\ndifficulty: 3\nstatus: open\n---\n## Problem\nX\n', /missing "solved_by"/],
+    ['jane_street not a month', NAME, teaserFile({ extraFrontMatter: 'jane_street: "2020-13"\n' }), /jane_street must be the month/],
     ['days 0', NAME, teaserFile({ extraFrontMatter: 'days: 0\n' }), /days must be a whole number/],
     ['days as text', NAME, teaserFile({ extraFrontMatter: 'days: ten\n' }), /days must be a whole number/],
     ['difficulty 0', NAME, teaserFile({ difficulty: 0 }), /difficulty must be a whole number from 1 to 10/],
@@ -201,6 +202,13 @@ describe('parseTeaserFile: malformed files fail with a clear message', () => {
 
   it('names the file in the error', () => {
     expect(() => parseTeaserFile(NAME, teaserFile({ status: 'done' }))).toThrow(`teasers/${NAME}:`)
+  })
+})
+
+describe('jane_street', () => {
+  it('keeps the month a Jane Street puzzle was published', () => {
+    expect(parseTeaserFile(NAME, teaserFile({ extraFrontMatter: 'jane_street: "2020-02"\n' })).janeStreet).toBe('2020-02')
+    expect(parseTeaserFile(NAME, teaserFile()).janeStreet).toBeNull()
   })
 })
 

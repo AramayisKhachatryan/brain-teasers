@@ -36,6 +36,7 @@ export function makeTeaser(overrides: Partial<Teaser> & Pick<Teaser, 'slug'>): T
     solvedBy: [],
     solvedOn: null,
     days: null,
+    janeStreet: null,
     problem: '<p>Problem</p>',
     hints: null,
     hintCount: 0,

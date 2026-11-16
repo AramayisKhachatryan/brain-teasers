@@ -27,6 +27,8 @@ export interface Teaser {
   solvedOn: string | null
   /** Days to solve, when set by hand (`days:`); otherwise it follows the difficulty (daysToSolve). */
   days: number | null
+  /** For a Jane Street puzzle, the month it was published there (`YYYY-MM`). */
+  janeStreet: string | null
   /** Rendered HTML of each section. Only `problem` exists while a teaser is open. */
   problem: string
   hints: string | null

@@ -39,6 +39,11 @@ describe('search', () => {
     expect(matchesQuery({ number: 5, title: "King's salary" }, query)).toBe(found)
   })
 
+  it('finds Jane Street puzzles by "jane street"', () => {
+    expect(matchesQuery({ number: 16, title: 'Single-Cross', janeStreet: '2020-02' }, 'jane')).toBe(true)
+    expect(matchesQuery({ number: 15, title: 'Sum To One', janeStreet: null }, 'jane')).toBe(false)
+  })
+
   it('still finds numbers inside titles', () => {
     expect(matchesQuery({ number: 1, title: 'Angle-coloring game on an 8×8 board' }, '8')).toBe(true)
   })
