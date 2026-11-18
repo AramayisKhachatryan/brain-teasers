@@ -108,7 +108,7 @@ Vite + React + TypeScript, vite-plugin-pwa, lucide-react, `marked` + KaTeX (at b
 Node **22.22.0** (`.nvmrc`; the workflows read it). Dependencies are pinned to exact versions; keep it that way.
 
 - `src/core/`: plain TypeScript, no React. `parse.ts` (parse + validate a teaser file, render markdown/math),
-  `score.ts`, `select.ts` (current teaser = newest open; archive = everything else), `router.ts` (hash router:
+  `score.ts` (points by difficulty, and teasers solved: both on the Home scoreboard), `select.ts` (current teaser = newest open; archive = everything else), `router.ts` (hash router:
   `#/`, `#/calendar`, `#/archive`, `#/stats`, `#/t/<file-name>`; each in-app navigation stores the screen it came from in
   `history.state`, which drives the teaser page's Back label and the active tab), `dates.ts`, `archive.ts`
   (Archive search by title or number ("11", "#11"), order newest/oldest (grouped by month) or hardest/easiest
