@@ -2,7 +2,7 @@ import { useLayoutEffect, useState, useSyncExternalStore } from 'react'
 import { DEFAULT_VIEW, type ArchiveView } from './core/archive'
 import { monthOf, todayIso } from './core/calendar'
 import { currentRoute, lastNavigation, onBeforeChange, routeKey, subscribe } from './core/router'
-import { computeScore } from './core/score'
+import { computeScore, computeSolved } from './core/score'
 import { computeStats } from './core/stats'
 import { archiveTeasers, currentTeaser, lastSolved } from './core/select'
 import { teasers } from './teasers'
@@ -13,6 +13,7 @@ import { HomeScreen, TeaserScreen } from './ui/screens'
 import { TabBar } from './ui/TabBar'
 
 const score = computeScore(teasers)
+const solved = computeSolved(teasers)
 const current = currentTeaser(teasers)
 const archive = archiveTeasers(teasers)
 const last = lastSolved(teasers)
@@ -37,7 +38,7 @@ export function App() {
   let screen
   switch (route.name) {
     case 'home':
-      screen = <HomeScreen current={current} lastSolved={last} score={score} />
+      screen = <HomeScreen current={current} lastSolved={last} score={score} solved={solved} />
       break
     case 'calendar':
       screen = <CalendarScreen teasers={teasers} month={calendarMonth} onMonthChange={setCalendarMonth} today={today} />

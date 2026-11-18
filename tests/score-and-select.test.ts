@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { computeScore } from '../src/core/score'
+import { computeScore, computeSolved } from '../src/core/score'
 import { archiveTeasers, currentTeaser, lastSolved, newestFirst } from '../src/core/select'
 import { makeTeaser } from './helpers'
 
@@ -25,6 +25,15 @@ describe('computeScore', () => {
       makeTeaser({ slug: '2026-10-03-c', difficulty: 9, solvedBy: [] }),
     ]
     expect(computeScore(teasers)).toEqual({ aramayis: 10, armen: 3 })
+  })
+
+  it('counts the teasers each person solved, whatever the difficulty', () => {
+    const teasers = [
+      makeTeaser({ slug: '2026-10-01-a', difficulty: 7, solvedBy: ['aramayis'] }),
+      makeTeaser({ slug: '2026-10-02-b', difficulty: 3, solvedBy: ['aramayis', 'armen'] }),
+      makeTeaser({ slug: '2026-10-03-c', difficulty: 5, status: 'open' }),
+    ]
+    expect(computeSolved(teasers)).toEqual({ aramayis: 2, armen: 1 })
   })
 
   it('ignores open teasers', () => {

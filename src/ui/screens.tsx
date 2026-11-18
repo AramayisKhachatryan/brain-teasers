@@ -8,11 +8,11 @@ import { Fold } from './Fold'
 import { NotifyCard } from './NotifyCard'
 import { ScoreBoard } from './ScoreBoard'
 
-export function HomeScreen(props: { current: Teaser | null; lastSolved: Teaser | null; score: Score }) {
+export function HomeScreen(props: { current: Teaser | null; lastSolved: Teaser | null; score: Score; solved: Score }) {
   const { current, lastSolved } = props
   return (
     <main className="screen screen--home">
-      <ScoreBoard score={props.score} />
+      <ScoreBoard score={props.score} solved={props.solved} />
       {current ? (
         <article className="teaser">
           <p className="teaser__date">{longDate(current.date)}</p>

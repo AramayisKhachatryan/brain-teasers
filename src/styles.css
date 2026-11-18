@@ -197,6 +197,15 @@ p {
   font-variant-numeric: lining-nums tabular-nums;
 }
 
+/* Under the points: how many teasers, whatever their difficulty. */
+.score__solved {
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 1.2;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
 .score__pencil {
   grid-column: 1 / -1;
   display: flex;
