@@ -27,6 +27,14 @@ describe('computeScore', () => {
     expect(computeScore(teasers)).toEqual({ aramayis: 10, armen: 3 })
   })
 
+  it('uses points set by hand instead of the difficulty', () => {
+    const teasers = [
+      makeTeaser({ slug: '2026-10-01-a', difficulty: 6, points: 3, solvedBy: ['aramayis', 'armen'] }),
+      makeTeaser({ slug: '2026-10-02-b', difficulty: 4, solvedBy: ['armen'] }),
+    ]
+    expect(computeScore(teasers)).toEqual({ aramayis: 3, armen: 7 })
+  })
+
   it('counts the teasers each person solved, whatever the difficulty', () => {
     const teasers = [
       makeTeaser({ slug: '2026-10-01-a', difficulty: 7, solvedBy: ['aramayis'] }),

@@ -164,6 +164,7 @@ describe('parseTeaserFile: malformed files fail with a clear message', () => {
     ['unknown key', NAME, teaserFile({ extraFrontMatter: 'solvedby: []\n' }), /unknown front matter key "solvedby"/],
     ['missing key', NAME, '---\nnumber: 1\ndate: 2026-10-29\ntitle: T\ndifficulty: 3\nstatus: open\n---\n## Problem\nX\n', /missing "solved_by"/],
     ['jane_street not a month', NAME, teaserFile({ extraFrontMatter: 'jane_street: "2020-13"\n' }), /jane_street must be the month/],
+    ['points 11', NAME, teaserFile({ extraFrontMatter: 'points: 11\n' }), /points must be a whole number/],
     ['days 0', NAME, teaserFile({ extraFrontMatter: 'days: 0\n' }), /days must be a whole number/],
     ['days as text', NAME, teaserFile({ extraFrontMatter: 'days: ten\n' }), /days must be a whole number/],
     ['difficulty 0', NAME, teaserFile({ difficulty: 0 }), /difficulty must be a whole number from 1 to 10/],

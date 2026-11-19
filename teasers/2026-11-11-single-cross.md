@@ -3,6 +3,7 @@ number: 16
 date: 2026-11-11
 title: "Single-Cross"
 difficulty: 6
+points: 3
 jane_street: "2020-02"
 days: 10
 status: solved
@@ -45,7 +46,7 @@ which increases all the way to $D = 1$, where it equals $\tfrac{2}{\pi}$.
 So the unit length is best, with probability $2/\pi$.
 
 ## Notes
-Both of us solved it, with two hints (both asked by Aramayis). Aramayis checked the length with Claude: $\tfrac12$ was wrong, $1$ right. This was our first Jane Street puzzle, given 10 days; we needed 6.
+Both of us solved it, with two hints (both asked by Aramayis). Aramayis checked the length with Claude: $\tfrac12$ was wrong, $1$ right. This was our first Jane Street puzzle, given 10 days; we finished on day 6. Because we took two hints, it's worth 3 points each instead of 6.
 
 Like Buffon's needle, $\pi$ comes in through averaging over the angle.
 

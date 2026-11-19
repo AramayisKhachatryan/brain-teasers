@@ -2,6 +2,7 @@
 import { Check, ChevronRight, Hourglass } from 'lucide-react'
 import type { MouseEvent, ReactNode } from 'react'
 import { daysToSolve } from '../core/daily'
+import { pointsFor } from '../core/score'
 import { daysBetween, monthLabel, shortDate } from '../core/dates'
 import { hrefFor, navigate, type Route } from '../core/router'
 import { DISPLAY_NAME, type Teaser } from '../core/teaser'
@@ -101,11 +102,14 @@ export function TeaserRow({ teaser }: { teaser: Teaser }) {
   )
 }
 
-/** "Difficulty 6 of 10 · 3 days to solve" while open; "Difficulty 6 of 10 · 6 points" once finished. */
+/** "Difficulty 6 of 10 · 3 days to solve" while open; "Difficulty 6 of 10 · 6 points" once finished
+ * ("3 points (of 6)" when the points were set lower by hand, e.g. after hints). */
 export function DifficultyLine({ teaser }: { teaser: Teaser }) {
   const d = teaser.difficulty
   const days = teaser.days ?? daysToSolve(d)
-  const rest = teaser.status === 'open' ? (days === 1 ? '1 day to solve' : `${days} days to solve`) : d === 1 ? '1 point' : `${d} points`
+  const p = pointsFor(teaser)
+  const pts = `${p === 1 ? '1 point' : `${p} points`}${p !== d ? ` (of ${d})` : ''}`
+  const rest = teaser.status === 'open' ? (days === 1 ? '1 day to solve' : `${days} days to solve`) : pts
   return (
     <p className="meta-line">
       Difficulty {d} of 10 · {rest}
@@ -126,7 +130,10 @@ export function SolvedLine({ teaser }: { teaser: Teaser }) {
         {DISPLAY_NAME[person]}
       </span>
     ))
-    const when = days === null ? '' : days === 0 ? ' the same day' : days === 1 ? ' a day later' : ` ${days} days later`
+    // "on day 6 of 10": which day of the days to solve it took, counting the day it was given as day 1.
+    const given = teaser.days ?? daysToSolve(teaser.difficulty)
+    const day = days === null ? null : days + 1
+    const when = day === null ? '' : day === 1 ? ' the same day' : ` on day ${day}${day <= given ? ` of ${given}` : ''}`
     content = (
       <>
         Solved by {names[0]}

@@ -27,6 +27,7 @@ const SHOTS = [
   { name: 'archive-nobody', build: 'real', hash: '#/archive', taps: [['button', 'Nobody']] },
   { name: 'archive-no-match', build: 'real', hash: '#/archive', search: 'pirates', taps: [['button', 'Armen']] },
   { name: 'teaser-real', build: 'real', hash: '#/t/2026-10-23-circle-chords' },
+  { name: 'teaser-jane-street', build: 'real', hash: '#/t/2026-11-11-single-cross' },
   { name: 'teaser-real-unfolded', build: 'real', hash: '#/t/2026-10-27-kings-salary', open: ['Solution'], fullPage: true },
   { name: 'home-nothing-open', build: 'all-solved', hash: '#/' },
   { name: 'calendar', build: 'real', hash: '#/calendar' },

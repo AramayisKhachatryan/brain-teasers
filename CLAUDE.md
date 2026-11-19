@@ -24,7 +24,8 @@ The file format and validation rules are in [`teasers/README.md`](teasers/README
 gaps; shown before the title as "#11 Parking lot"; a new teaser gets the next one), `date`, `title`, `difficulty`
 (1–10: each solver gets that many points, and it sets the days to solve), optional `days` (days to solve set by
 hand when Aramayis asks, e.g. 10 for a Jane Street puzzle), optional `jane_street: "YYYY-MM"` (a Jane Street
-puzzle and the month it was published; the app shows a "Jane Street · February 2020" tag; the script adds it), `status`
+puzzle and the month it was published; the app shows a "Jane Street · February 2020" tag; the script adds it),
+optional `points` (points each solver gets when Aramayis sets them by hand, e.g. 3 instead of 6 after hints), `status`
 (`open`|`solved`), `solved_by` (`[]`, `[aramayis]`, `[armen]`, `[aramayis, armen]`), optional `solved_on`
 (the day they finished; solving often takes more than a day), then `## Problem`, `## Hints`, `## Solution`,
 `## Notes`. Teasers #1 to #7 (22–29 Oct 2026) were imported from the list and notes Aramayis sent.
