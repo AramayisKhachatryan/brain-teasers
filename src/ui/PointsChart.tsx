@@ -1,5 +1,6 @@
 import { useLayoutEffect, useRef, useState, type PointerEvent } from 'react'
 import { daysBetween, shortDate } from '../core/dates'
+import { pointsFor } from '../core/score'
 import type { PointsDay } from '../core/stats'
 import { DISPLAY_NAME, PEOPLE, numberedTitle, type Person } from '../core/teaser'
 
@@ -149,7 +150,7 @@ export function PointsChart({ timeline }: { timeline: readonly PointsDay[] }) {
             {shown.finished.map((teaser) => (
               <p key={teaser.slug} className="chart__tip-teaser">
                 {numberedTitle(teaser)}
-                {teaser.solvedBy.length ? ` +${teaser.difficulty}` : ' (nobody)'}
+                {teaser.solvedBy.length ? ` +${pointsFor(teaser)}` : ' (nobody)'}
               </p>
             ))}
           </div>

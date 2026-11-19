@@ -2,6 +2,7 @@
 // ones nobody got) count; open teasers are still in play.
 import { daysBetween } from './dates'
 import { bandOf, type Band } from './daily'
+import { pointsFor } from './score'
 import { PEOPLE, type Person, type Teaser } from './teaser'
 
 /** Running points after each day something was finished: one point per date, both people. */
@@ -60,7 +61,7 @@ export function pointsTimeline(teasers: readonly Teaser[]): PointsDay[] {
   const running = Object.fromEntries(PEOPLE.map((person) => [person, 0])) as Record<Person, number>
   return dates.map((date) => {
     const that = finished.filter((teaser) => finishedOn(teaser) === date)
-    for (const teaser of that) for (const person of teaser.solvedBy) running[person] += teaser.difficulty
+    for (const teaser of that) for (const person of teaser.solvedBy) running[person] += pointsFor(teaser)
     return { date, points: { ...running }, finished: that }
   })
 }
@@ -79,7 +80,7 @@ function personStats(finished: readonly Teaser[], person: Person): PersonStats {
     (top, teaser) => (top === null || teaser.difficulty > top.difficulty ? teaser : top),
     null,
   )
-  const points = solvedList.reduce((sum, teaser) => sum + teaser.difficulty, 0)
+  const points = solvedList.reduce((sum, teaser) => sum + pointsFor(teaser), 0)
   return {
     points,
     solved: solvedList.length,
@@ -87,7 +88,7 @@ function personStats(finished: readonly Teaser[], person: Person): PersonStats {
     streak,
     bestStreak: best,
     hardest,
-    averageDifficulty: solvedList.length ? points / solvedList.length : null,
+    averageDifficulty: solvedList.length ? solvedList.reduce((sum, teaser) => sum + teaser.difficulty, 0) / solvedList.length : null,
     solo: solvedList.filter((teaser) => teaser.solvedBy.length === 1).length,
   }
 }

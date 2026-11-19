@@ -29,6 +29,8 @@ export interface Teaser {
   days: number | null
   /** For a Jane Street puzzle, the month it was published there (`YYYY-MM`). */
   janeStreet: string | null
+  /** Points each solver gets, when set by hand (`points:`, e.g. fewer after hints); otherwise the difficulty. */
+  points: number | null
   /** Rendered HTML of each section. Only `problem` exists while a teaser is open. */
   problem: string
   hints: string | null
