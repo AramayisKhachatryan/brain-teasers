@@ -63,7 +63,8 @@
     "category": "probability",
     "link": "https://brainstellar.com/puzzles/easy/6",
     "question": "In a world where everyone wants a girl child, each family continues having babies till they have a girl. What do you think will the boy-to-girl ratio be eventually?\n\nAssuming probability of having a boy or a girl is the same and there is no other gender at the time of birth.",
-    "status": "available"
+    "status": "used",
+    "teaser": "2026-11-20-all-girls-world"
   },
   {
     "id": "brainstellar-7",
