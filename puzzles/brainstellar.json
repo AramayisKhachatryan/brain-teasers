@@ -857,7 +857,8 @@
     "category": "probability",
     "link": "https://brainstellar.com/puzzles/hard/205",
     "question": "There are $n$ letters and $n$ envelopes. You put the letters randomly in the envelopes so that each letter is in one envelope. (Effectively a random permutation of $n$ numbers chosen uniformly). Calculate the expected number of envelopes with the correct letter inside them.",
-    "status": "available"
+    "status": "used",
+    "teaser": "2026-11-23-messing-with-envelops"
   },
   {
     "id": "brainstellar-206",
