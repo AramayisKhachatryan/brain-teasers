@@ -3,6 +3,7 @@ number: 22
 date: 2026-11-23
 title: "Messing with Envelops"
 difficulty: 3
+days: 2
 status: open
 solved_by: []
 ---
