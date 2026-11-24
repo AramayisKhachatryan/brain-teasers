@@ -35,7 +35,12 @@ Every morning `.github/workflows/daily-teaser.yml` runs `node scripts/daily-teas
 A teaser can carry its own `days:` (1–31) when Aramayis asks for a different time; the job then waits that long.
 `--pick <id> --days <n>` adds a particular puzzle with its own time.
 
-Once that time is up (or the teaser is solved), it picks the next puzzle:
+**`queue.json`** lists puzzles to post next, in order (since 24 Nov 2026: a 10-teaser random-walk series, easiest
+first, ending with Jane Street's "Andy's Morning Stroll"). The first queued puzzle not yet used always goes next,
+before the rules below. **`originals.json`** holds puzzles Claude wrote (`source: "original"`, questions only),
+such as the series' own problems; a solved one's Notes end with "Source: written by Claude for our random-walk series".
+
+Once that time is up (or the teaser is solved), it picks the next puzzle (unless the queue has one):
 
 - **A Jane Street puzzle once a month:** from the 10th, if the month has none yet.
 - **Mixed difficulty** otherwise: the band (easy 1–3, medium 4–5, hard 6+) seen least among the last three teasers,

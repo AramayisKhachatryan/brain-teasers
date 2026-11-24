@@ -27,6 +27,9 @@ const BANK = new URL('../puzzles/brainstellar.json', import.meta.url)
 const TEASERS = new URL('../teasers/', import.meta.url)
 const DAYS_OFF = new URL('../puzzles/days-off.json', import.meta.url)
 const WINKLER_USED = new URL('../puzzles/winkler-used.json', import.meta.url)
+// Puzzles Claude wrote (e.g. for a series), and the order of puzzles to post next.
+const ORIGINALS = new URL('../puzzles/originals.json', import.meta.url)
+const QUEUE = new URL('../puzzles/queue.json', import.meta.url)
 // Winkler's puzzles come from a private repository (the texts are from his book, so they stay out of this public
 // repo). The Daily teaser workflow checks it out when the BANK_TOKEN secret is set; without it, no Winkler.
 const WINKLER_BANK = process.env.WINKLER_BANK ?? new URL('../winkler-bank/winkler.json', import.meta.url).pathname
@@ -42,7 +45,9 @@ const publicBank: BankPuzzle[] = JSON.parse(readFileSync(BANK, 'utf8'))
 const winklerUsed: WinklerUse[] = JSON.parse(readFileSync(WINKLER_USED, 'utf8'))
 const winkler = existsSync(WINKLER_BANK) ? winklerBank(JSON.parse(readFileSync(WINKLER_BANK, 'utf8')), winklerUsed) : []
 console.log(winkler.length ? `Winkler puzzles: ${winkler.filter((p) => p.status === 'available').length} available.` : 'No Winkler puzzles (private bank not found).')
-const bank = [...publicBank, ...winkler]
+const originals: BankPuzzle[] = existsSync(ORIGINALS) ? JSON.parse(readFileSync(ORIGINALS, 'utf8')) : []
+const queue: string[] = existsSync(QUEUE) ? JSON.parse(readFileSync(QUEUE, 'utf8')) : []
+const bank = [...publicBank, ...originals, ...winkler]
 const daysOff: DayOff[] = existsSync(DAYS_OFF) ? JSON.parse(readFileSync(DAYS_OFF, 'utf8')) : []
 const teaserFiles = readdirSync(TEASERS).filter((name) => /^\d{4}-\d{2}-\d{2}-.*\.md$/.test(name))
 const sources = teaserFiles.map((name) => readFileSync(new URL(name, TEASERS), 'utf8'))
@@ -58,6 +63,7 @@ const plan = planDailyTeaser({
   exclude,
   pick,
   days,
+  queue,
   number,
   date,
   randomIndex: (count) => randomInt(count),
@@ -81,8 +87,10 @@ if (plan.action === 'skip') {
     if (plan.puzzle.source === 'winkler') {
       const teaser = plan.fileName.slice(0, -'.md'.length)
       writeFileSync(WINKLER_USED, `${JSON.stringify([...winklerUsed, { id: plan.puzzle.id, teaser }], null, 2)}\n`)
+    } else if (plan.puzzle.source === 'original') {
+      writeFileSync(ORIGINALS, `${JSON.stringify(plan.bank.filter((p) => p.source === 'original'), null, 2)}\n`)
     } else {
-      writeFileSync(BANK, `${JSON.stringify(plan.bank.filter((p) => p.source !== 'winkler'), null, 2)}\n`)
+      writeFileSync(BANK, `${JSON.stringify(plan.bank.filter((p) => p.source === 'brainstellar' || p.source === 'janestreet'), null, 2)}\n`)
     }
   }
   output('added', dryRun ? 'false' : 'true')
