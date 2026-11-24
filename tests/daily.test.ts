@@ -246,3 +246,37 @@ describe('days set by hand', () => {
     })
   })
 })
+
+describe('the queue', () => {
+  const bank = [puzzle(1, 'available', 'One', 2), puzzle(2, 'used', 'Two', 3), puzzle(3, 'skip', 'Three', 6), puzzle(4, 'available', 'Four', 9)]
+  const run = (queue: string[], extra = {}) =>
+    planDailyTeaser({ number: 30, bank, teaserFiles: [], recent: [], date: '2026-11-25', randomIndex: () => 0, queue, ...extra })
+
+  it('posts the first queued puzzle not yet used, in order', () => {
+    const plan = run(['brainstellar-2', 'brainstellar-4', 'brainstellar-1'])
+    expect(plan.action === 'add' && plan.puzzle.id).toBe('brainstellar-4')
+  })
+
+  it('may post a queued puzzle marked skip', () => {
+    const plan = run(['brainstellar-3'])
+    expect(plan.action === 'add' && plan.puzzle.id).toBe('brainstellar-3')
+  })
+
+  it('waits rather than skip ahead when the next queued puzzle is missing', () => {
+    expect(run(['winkler-94', 'brainstellar-1'])).toEqual({ action: 'skip', reason: "the next queued puzzle, winkler-94, isn't in the bank" })
+  })
+
+  it('goes back to the mixing rules when the queue is done', () => {
+    const plan = run(['brainstellar-2'])
+    expect(plan.action).toBe('add')
+    expect(['brainstellar-1', 'brainstellar-4']).toContain(plan.action === 'add' ? plan.puzzle.id : '')
+  })
+})
+
+describe('teaserFile and figures', () => {
+  it('drops a Winkler figure we do not have', () => {
+    const p = { ...puzzle(94, 'skip', 'Hopping', 6, 'winkler'), question: 'A frog hops.\n\n![Figure for Hopping](winkler_figures/w094.png)' }
+    expect(teaserFile(p, '2030-01-01', 1).content).not.toContain('winkler_figures')
+    expect(teaserFile(p, '2030-01-01', 1).content).toContain('A frog hops.\n')
+  })
+})

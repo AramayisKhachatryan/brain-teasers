@@ -1,7 +1,7 @@
 // Picks the daily teaser from the puzzle bank (puzzles/brainstellar.json). Plain TypeScript with no imports,
 // so Node can run scripts/daily-teaser.ts directly and the tests use the same code.
 
-export type PuzzleSource = 'brainstellar' | 'winkler' | 'janestreet'
+export type PuzzleSource = 'brainstellar' | 'winkler' | 'janestreet' | 'original'
 
 export interface BankPuzzle {
   id: string
@@ -74,7 +74,8 @@ export function teaserFile(
     '---',
     '',
     '## Problem',
-    puzzle.question,
+    // A Winkler figure lives only in the book's scans, not here: drop the broken image, keep the words.
+    puzzle.question.replace(/\n*!\[[^\]]*\]\(winkler_figures\/[^)]*\)\n*/g, '\n\n').trim(),
     '',
   ].join('\n')
   return { fileName, content }
@@ -230,6 +231,11 @@ export function planDailyTeaser(input: {
   pick?: string
   /** Days to solve set by hand, instead of the difficulty's. */
   days?: number
+  /**
+   * Puzzles to post next, in this order (puzzles/queue.json, e.g. a series). The first one not yet used goes next,
+   * before any mixing rule; a queued puzzle may be one marked `skip` (e.g. a Winkler puzzle whose figure isn't needed).
+   */
+  queue?: readonly string[]
 }): DailyPlan {
   const recent = input.recent ?? []
   if (!input.extra) {
@@ -248,11 +254,20 @@ export function planDailyTeaser(input: {
     }
   }
   const available = input.bank.filter((puzzle) => puzzle.status === 'available' && !input.exclude?.includes(puzzle.id))
-  const puzzle = input.pick
-    ? (available.find((entry) => entry.id === input.pick) ?? null)
-    : pickPuzzle({ available, bank: input.bank, recent, date: input.date, randomIndex: input.randomIndex })
-  if (!puzzle) {
-    return { action: 'skip', reason: input.pick ? `${input.pick} is not an available puzzle` : 'the puzzle bank has no unused puzzles left' }
+  let puzzle: BankPuzzle | null
+  if (input.pick) {
+    puzzle = available.find((entry) => entry.id === input.pick) ?? null
+    if (!puzzle) return { action: 'skip', reason: `${input.pick} is not an available puzzle` }
+  } else {
+    const nextInQueue = input.queue?.find((id) => input.bank.find((entry) => entry.id === id)?.status !== 'used')
+    if (nextInQueue) {
+      // Keep the order: if the next queued puzzle can't be read (e.g. the private Winkler bank is missing), wait.
+      puzzle = input.bank.find((entry) => entry.id === nextInQueue) ?? null
+      if (!puzzle) return { action: 'skip', reason: `the next queued puzzle, ${nextInQueue}, isn't in the bank` }
+    } else {
+      puzzle = pickPuzzle({ available, bank: input.bank, recent, date: input.date, randomIndex: input.randomIndex })
+      if (!puzzle) return { action: 'skip', reason: 'the puzzle bank has no unused puzzles left' }
+    }
   }
 
   const { fileName, content } = teaserFile(puzzle, input.date, input.number, input.days)

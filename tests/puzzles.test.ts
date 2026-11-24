@@ -56,3 +56,24 @@ describe('puzzles/brainstellar.json', () => {
     expect(clashes.map((p) => p.id)).toEqual([])
   })
 })
+
+describe('puzzles/originals.json and puzzles/queue.json', () => {
+  const originals: BankPuzzle[] = JSON.parse(readFileSync(fileURLToPath(new URL('../puzzles/originals.json', import.meta.url)), 'utf8'))
+  const queue: string[] = JSON.parse(readFileSync(fileURLToPath(new URL('../puzzles/queue.json', import.meta.url)), 'utf8'))
+
+  it.each(originals.map((p) => [p.id, p] as const))('%s is a well-formed original that becomes a valid teaser', (_id, p) => {
+    expect(p.source).toBe('original')
+    expect(p.id).toMatch(/^original-/)
+    expect(Number.isInteger(p.difficulty) && p.difficulty >= 1 && p.difficulty <= 10).toBe(true)
+    expect(['available', 'used', 'skip']).toContain(p.status)
+    if (p.status === 'used') expect(existsSync(`${teasersDir}${p.teaser}.md`)).toBe(true)
+    const { fileName, content } = teaserFile(p, '2030-01-01', 99)
+    expect(() => parseTeaserFile(fileName, content)).not.toThrow()
+  })
+
+  it('queues only known puzzles, each once', () => {
+    const known = new Set([...bank, ...originals].map((p) => p.id))
+    expect(new Set(queue).size).toBe(queue.length)
+    for (const id of queue) expect(known.has(id) || /^winkler-\d+$/.test(id)).toBe(true)
+  })
+})

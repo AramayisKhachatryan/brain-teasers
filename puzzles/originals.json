@@ -1,0 +1,52 @@
+[
+  {
+    "id": "original-rw-1",
+    "source": "original",
+    "number": 1,
+    "title": "Four steps",
+    "difficulty": 2,
+    "category": "random walk",
+    "question": "You start at $0$ on the number line. At every step you move one unit to the left or one unit to the right, each with probability $\\tfrac12$, independently of the past.\n\nWhat is the probability that after exactly 4 steps you are back at $0$?",
+    "status": "available"
+  },
+  {
+    "id": "original-rw-2",
+    "source": "original",
+    "number": 2,
+    "title": "First return",
+    "difficulty": 3,
+    "category": "random walk",
+    "question": "You start at $0$ on the number line. At every step you move one unit to the left or one unit to the right, each with probability $\\tfrac12$, independently of the past.\n\n1. What is the probability that you come back to $0$ for the *first* time at step 4?\n2. What is the probability that you don't come back to $0$ at all during the first 4 steps?",
+    "status": "available"
+  },
+  {
+    "id": "original-rw-3",
+    "source": "original",
+    "number": 3,
+    "title": "How long does it last?",
+    "difficulty": 5,
+    "category": "random walk",
+    "question": "A walker stands on the integer $3$ on a path with ends at $0$ and $10$. Every step goes one unit left or right with probability $\\tfrac12$ each, and the walk stops as soon as it reaches $0$ or $10$.\n\nWhat is the expected number of steps until it stops? More generally, what is it when the walker starts at $k$ and the ends are $0$ and $n$?",
+    "status": "available"
+  },
+  {
+    "id": "original-rw-4",
+    "source": "original",
+    "number": 4,
+    "title": "Election night",
+    "difficulty": 6,
+    "category": "random walk",
+    "question": "In an election Alice gets 7 votes and Bob gets 3. The 10 ballots are counted one at a time, in a uniformly random order.\n\nWhat is the probability that Alice is strictly ahead of Bob throughout the whole count, from the first ballot to the last?",
+    "status": "available"
+  },
+  {
+    "id": "original-rw-5",
+    "source": "original",
+    "number": 5,
+    "title": "The leaning walk",
+    "difficulty": 6,
+    "category": "random walk",
+    "question": "You start at $0$ on the number line. At every step you move one unit to the right with probability $\\tfrac23$ and one unit to the left with probability $\\tfrac13$, independently of the past, and you walk forever.\n\nWhat is the probability that you ever reach $-1$? What about $-5$?",
+    "status": "available"
+  }
+]
