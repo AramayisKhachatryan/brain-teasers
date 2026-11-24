@@ -7,7 +7,8 @@
     "difficulty": 2,
     "category": "random walk",
     "question": "You start at $0$ on the number line. At every step you move one unit to the left or one unit to the right, each with probability $\\tfrac12$, independently of the past.\n\nWhat is the probability that after exactly 4 steps you are back at $0$?",
-    "status": "available"
+    "status": "used",
+    "teaser": "2026-11-24-four-steps"
   },
   {
     "id": "original-rw-2",
