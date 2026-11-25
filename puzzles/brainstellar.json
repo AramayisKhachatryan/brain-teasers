@@ -824,7 +824,8 @@
     "category": "probability",
     "link": "https://brainstellar.com/puzzles/hard/202",
     "question": "An ant is standing on one corner of a cube & can only walk on the edges. The ant is drunk and from any corner, it moves randomly by choosing any edge! What is the expected number of edges the ant travels, to reach the opposite corner?",
-    "status": "available"
+    "status": "used",
+    "teaser": "2026-11-25-drunk-ant"
   },
   {
     "id": "brainstellar-203",
