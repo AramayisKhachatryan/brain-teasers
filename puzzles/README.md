@@ -37,7 +37,9 @@ A teaser can carry its own `days:` (1–31) when Aramayis asks for a different t
 
 **`queue.json`** lists puzzles to post next, in order (since 24 Nov 2026: a 10-teaser random-walk series, easiest
 first, ending with Jane Street's "Andy's Morning Stroll"). The first queued puzzle not yet used always goes next,
-before the rules below. **`originals.json`** holds puzzles Claude wrote (`source: "original"`, questions only),
+before the rules below. **`paused.json`** holds puzzles kept back for later (`ids`): they are never picked at
+random. Since 25 Nov 2026 it holds parts 2–10 of the random-walk series, paused while they learn the theory; to
+resume, put those ids back in `queue.json` (in order) and empty `ids`. **`originals.json`** holds puzzles Claude wrote (`source: "original"`, questions only),
 such as the series' own problems; a solved one's Notes end with "Source: written by Claude for our random-walk series".
 
 Once that time is up (or the teaser is solved), it picks the next puzzle (unless the queue has one):

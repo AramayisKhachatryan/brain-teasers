@@ -37,7 +37,9 @@ Jane Street, rated 1–10). Each teaser gets **days to solve by difficulty** (1 
 in `puzzles/README.md`); when they're up, or the teaser is solved, a new one appears in the morning before 8:00
 Armenian time. Difficulties are mixed, with at least one Jane Street puzzle a month. If they solve it fast, they ask
 for a new one ("give us a new teaser"). **A queue comes first:** `puzzles/queue.json` lists puzzles to post next in
-order (since 24 Nov 2026 a 10-teaser random-walk series of increasing difficulty, ending with a Jane Street puzzle);
+order (a 10-teaser random-walk series of increasing difficulty, ending with a Jane Street puzzle, started 24 Nov 2026;
+paused on 25 Nov after part 1 while they learn the theory: parts 2–10 wait in `puzzles/paused.json`, which the script never picks at random;
+to resume, move those ids back to the queue);
 `puzzles/originals.json` holds puzzles Claude wrote for it. The bank holds all BrainStellar (97) and Jane Street (153) questions. The
 313 Winkler puzzles (from his book *Mathematical Puzzles*) must never be committed to this public repo (that would
 republish most of a book): they live in the private repo `brain-teasers-bank`, read by the morning job with the
