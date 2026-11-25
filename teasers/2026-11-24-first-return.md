@@ -3,6 +3,7 @@ number: 24
 date: 2026-11-24
 title: "First return"
 difficulty: 3
+days: 2
 status: open
 solved_by: []
 ---
