@@ -30,6 +30,8 @@ const WINKLER_USED = new URL('../puzzles/winkler-used.json', import.meta.url)
 // Puzzles Claude wrote (e.g. for a series), and the order of puzzles to post next.
 const ORIGINALS = new URL('../puzzles/originals.json', import.meta.url)
 const QUEUE = new URL('../puzzles/queue.json', import.meta.url)
+// Puzzles held back for later (e.g. a paused series): never picked at random, only from the queue.
+const PAUSED = new URL('../puzzles/paused.json', import.meta.url)
 // Winkler's puzzles come from a private repository (the texts are from his book, so they stay out of this public
 // repo). The Daily teaser workflow checks it out when the BANK_TOKEN secret is set; without it, no Winkler.
 const WINKLER_BANK = process.env.WINKLER_BANK ?? new URL('../winkler-bank/winkler.json', import.meta.url).pathname
@@ -53,7 +55,11 @@ const teaserFiles = readdirSync(TEASERS).filter((name) => /^\d{4}-\d{2}-\d{2}-.*
 const sources = teaserFiles.map((name) => readFileSync(new URL(name, TEASERS), 'utf8'))
 const number = nextNumber(sources)
 const recent = sources.map(summarize).filter((summary): summary is TeaserSummary => summary !== null)
-const exclude = args.includes('--exclude') ? args[args.indexOf('--exclude') + 1].split(',') : []
+const paused: string[] = existsSync(PAUSED) ? JSON.parse(readFileSync(PAUSED, 'utf8')).ids : []
+const exclude = [
+  ...paused,
+  ...(args.includes('--exclude') ? args[args.indexOf('--exclude') + 1].split(',') : []),
+]
 const pick = args.includes('--pick') ? args[args.indexOf('--pick') + 1] : undefined
 const days = args.includes('--days') ? Number(args[args.indexOf('--days') + 1]) : undefined
 const plan = planDailyTeaser({
